@@ -5,7 +5,6 @@ exports.up = function(knex, Promise) {
         table.integer('building_id').unsigned().references('id').inTable('building')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
-        table.string('room_floor').notNullable()
         table.string('room_number').notNullable()
         table.timestamps()
 

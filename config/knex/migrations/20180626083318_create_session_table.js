@@ -10,7 +10,7 @@ exports.up = function(knex, Promise) {
         .onDelete('CASCADE')
         table.integer('pid').notNullable()
         table.dateTime('start_time').notNullable()
-        table.dateTime('end_time').notNullable()
+        table.dateTime('end_time')
         table.timestamps()
     })
 };
