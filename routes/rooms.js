@@ -21,7 +21,8 @@ router.get('/:building/:room', function(req, res) {
             this.select('id').from('building').where('abbrev', req.params.building);
         });
     }).then(function(machines) {
-        if (machines > 0 ) {
+        console.log(machines)
+        if (machines.length > 0 ) {
             res.sendFile(path.join(__dirname, '../views', 'labdetails.html'));
         } else {
             res.sendFile(path.join(__dirname, '../views', 'error.html'));

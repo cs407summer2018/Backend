@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 var config = require('../config/knex/knexfile');
 var knex = require('knex')(config);
+var path = require('path');
 
 router.post('/addBuilding', function(req, res) {
     knex('building').insert(req.body).then(function(result) {
