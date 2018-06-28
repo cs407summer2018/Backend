@@ -1,8 +1,10 @@
 // app.js
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var buildings = require('./routes/buildings');
+var rooms = require('./routes/rooms')
 
 var port = 3000;
 
@@ -12,6 +14,8 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/views/index.html');
 });
 
+app.use('/', buildings);
+app.use('/', rooms);
 
 module.exports = app;
 
