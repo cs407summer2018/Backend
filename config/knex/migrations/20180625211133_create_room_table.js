@@ -6,6 +6,8 @@ exports.up = function(knex, Promise) {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
         table.string('room_number').notNullable()
+        table.integer('capacity').notNullable()
+        table.string('google_calander_id')
         table.timestamps()
 
     })
