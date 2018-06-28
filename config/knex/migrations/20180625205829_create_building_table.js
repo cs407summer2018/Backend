@@ -2,10 +2,10 @@
 exports.up = function(knex, Promise) {
     return knex.schema.createTable('building', function(table) {
         table.increments('id').primary()
-        table.string('name').notNullable()
-        table.string('address').notNullable()
-        table.string('abbrev').notNullable()
-        table.timestamps()
+        table.string('name').unique().notNullable()
+        table.string('address').unique().notNullable()
+        table.string('abbrev').unique().notNullable()
+        table.timestamps(true, true)
 
     })
 };

@@ -7,8 +7,8 @@ exports.up = function(knex, Promise) {
         .onDelete('CASCADE')
         table.string('room_number').notNullable()
         table.integer('capacity').notNullable()
-        table.string('google_calander_id')
-        table.timestamps()
+        table.string('google_calender_id')
+        table.timestamps(true, true)
 
     })
 };
