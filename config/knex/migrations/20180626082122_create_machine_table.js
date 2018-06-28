@@ -6,7 +6,7 @@ exports.up = function(knex, Promise) {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
         table.string('name').notNullable()
-        table.timestamps()
+        table.timestamps(true, true)
     })
 };
 

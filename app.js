@@ -14,8 +14,11 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/views/index.html');
 });
 
+app.use(bodyParser.json());
+
 app.use('/', buildings);
 app.use('/', rooms);
+
 
 module.exports = app;
 

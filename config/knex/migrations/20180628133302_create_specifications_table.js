@@ -10,7 +10,7 @@ exports.up = function(knex, Promise) {
         table.string('monitor')
         table.string('printer')
         table.string('printer_id')
-        table.timestamps()
+        table.timestamps(true, true)
 
     })
 };
