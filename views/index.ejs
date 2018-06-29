@@ -1,25 +1,25 @@
-<!-- views/pages/index.ejs -->
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <body>
 
-</head>
-<body class="container">
-
-<header>
-    
-</header>
-
-<main>
     <div class="jumbotron">
-        <h1>This is great</h1>
-        <p>Welcome to templating using EJS</p>
+      <h1>Node Graph Tutorial</h1>
+      <p class="lead">This sample app shows how to use the Microsoft Graph API to access Outlook data from Node.js</p>
+      
+        <p>Welcome</p>
+
+       <% console.log(debug); %>
+       <% if (user != undefined) { %>
+          <p><%= user %></p>
+       <% } else {%>
+          <p>not logged in</p>
+          <%= signInUrl%>
+       <% } %>
+       
+        
+        <a class="btn btn-primary btn-large" href="<%= signInUrl %>">Click here to login</a>
+     
     </div>
-</main>
 
-<footer>
-</footer>
-
-</body>
+  </body>
 </html>
