@@ -66,11 +66,9 @@ router.get('/:building/:room', function(req, res) {
                                 var endTime = new Date(response.data.items[0].end.dateTime);
                                 var timeNow = new Date();
                                 if (startTime <= timeNow && timeNow <= endTime) {
-                                    console.log("CLASS IN SESSION")
                                     avaliablity = "Class in session"
                                 } else {
                                     avaliablity = "open"
-                                    console.log("OPEN")
                                 }
                                 res.render('../views/room.ejs', {
                                     machines: machines,
