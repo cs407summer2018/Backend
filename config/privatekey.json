@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "glassy-land-208615",
+  "private_key_id": "295f2eaf89585a26941599603921a80736dc5e8f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQClQgEi71c28qEI\nwoLHLuZg14uMOkk9n/h4yLHHY+FRBmsxkEEaBjx6YHAjWMyOAYTOEQkw+2dJ/IQw\nlCJoYX4U4hyGfQsRs7PHUzZ5qcVvb9plIQSPvuYLov6y1FaTMSwqYMYNMinqAcGB\npeOCifhKsaHreNRBsK7ifvVOKQJ/s0okxd+Qb5djH1uvrxVphZCTQmlsy1r4B0Pv\nS0Gh/KlJTSfJdRlvggJve5eKB42UAZqJs7IwrWFOn1PKuG7AgoGb227rxxpUuzis\ne1c2hmxyv+Whcdg09bPYujGqyHdEj9unzKaFbbU+UxFQa01mwNGjt9/i1LHDVRdA\nog6iK+fxAgMBAAECgf9T7qIFIZTPeOCw7O7e8G2xjHJ5ALa8xcgSEFxlQyU8sbXf\nsRRffgCuvCw4HPGcw3Nf9ZG61EoxbumfLUgMcPedmPmZP15P2fqE/I5pBwDFCFoz\njVbJFdELjU0u0QmSLcybTsCdaHeWki27BeCh0XvO8/OjqfVOfR4ANdsA8h3YHQuq\nrW0dETLfrwpr5S3l5/d0mpSTV0PlqlXg/S0me8MPBC196hemVEkMSnHL0bJxtfLS\nU0/LH239DTwSIzE536OUlDg2fuetqm3c7ArOa83KnUW574IlTTX34i9yyFmKuquO\nMQGH2jp+HNgZGqe1lhxtWFeGgJDnPtKTKOOBkSECgYEAz3tCXYs9S5IfIvJ8cK+8\nKDsFOufD+S36Rs/1LVyzbtlBsOrtlaf5+39jLSdUyt4CLZz1Df+gMxQjiKTc9YJs\n1oDSqRo39pqDIxu8C9guVSACbY1d7FS7YcOOh2jbIDztPSbqwcAdykSB0OWgBzU6\ngIAWWtRg14FlBnJIVeLPz5ECgYEAy+cN7afZnQcCHOKRu3zzjfHMeQa421o0kL62\nfQFUuOYKwLp/TyYSD6El1/C4b0B+4L1xjN0h6DxoPUSLlWd3WreAxzZ+S3XS9zIf\nQrcO+7WCzyXB/tSqVs0+ETfbxWNxzJTtGA75WX/FL2437W0kY5I5AbjoFazV5ukM\nOfWNImECgYBTTbDqsAIPOn7n4CYYdGZ+XJwP94gWnuAy2EIfUW31nqMibmCvyr6y\nvIXMVlNUFGkZeUBmu3DNsVNHBLJ2nEQop5ZtMMqxZ34pdXQ96TFJGk3/QFgqkCaf\n7Q1nzrDUM8Io4Fw3KHSNho38moVy/2sattLC6yxqulgei3oBicxYEQKBgQChB4eT\ncaTFg1xizXgEFokOR7CQwANLkHDFAyiBjoSHRX2meWLDcjB/UWfeowg1LD1HZbWA\nZr85dkNoZ3LI+h5jcVpteZbCJ3oFqPrRKFrX5KA60fnkM7WWuZ5T4MZam8+qns6j\n2meIDAUBEU1v32sGi9sjhhEb1RRUuSXjvA3K4QKBgGw87o0AWqWYDkOVHW4LKdhG\nVobeAfmbp1e1YbS2/HV26f42VkcKhN0ax2sOpf1PnejZbT92D4RK7wtxC93sdaG/\njeMDsJqL8yz1t1upubwL/rEAeswKk1RWfjd5diyiRCMvMc3DHHGAZlisYRBjuSQI\nQu32ypQGZPmiASF6DvjY\n-----END PRIVATE KEY-----\n",
+  "client_email": "purduelabstats@glassy-land-208615.iam.gserviceaccount.com",
+  "client_id": "107294841578743231342",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/purduelabstats%40glassy-land-208615.iam.gserviceaccount.com"
+}

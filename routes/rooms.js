@@ -4,6 +4,30 @@ var config = require('../config/knex/knexfile')
 var knex = require('knex')(config)
 var path = require('path')
 
+var {google} = require('googleapis');
+var privatekey = require("../config/privatekey.json");
+
+
+
+// configure a JWT auth client
+let jwtClient = new google.auth.JWT(
+    privatekey.client_email,
+    null,
+    privatekey.private_key,
+    ['https://www.googleapis.com/auth/spreadsheets',
+     'https://www.googleapis.com/auth/drive',
+     'https://www.googleapis.com/auth/calendar']);
+
+jwtClient.authorize(function (err, tokens) {
+if (err) {
+    console.log(err);
+return;
+} else {
+    console.log("Successfully connected!");
+}
+});
+
+
 router.post('/addRoom', function(req, res) {
     knex('room').insert(req.body).then(function(result) {
         res.json({sucess: true})
@@ -28,11 +52,34 @@ router.get('/:building/:room', function(req, res) {
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
-                        res.render('../views/room.ejs', {
-                            machines: machines,
-                            room: room,
-                            building: req.params.building
-                        });
+                        var avaliablity = "";
+                        let calendar = google.calendar('v3');
+                        calendar.events.list({
+                            auth: jwtClient,
+                            calendarId: machines[0].google_calender_id,
+                            timeMin: (new Date()).toISOString(),
+                            maxResults: 10,
+                            singleEvents: true,
+                            orderBy: 'startTime',}, 
+                            function (err, response) {
+                                var startTime = new Date(response.data.items[0].start.dateTime);
+                                var endTime = new Date(response.data.items[0].end.dateTime);
+                                var timeNow = new Date();
+                                if (startTime <= timeNow && timeNow <= endTime) {
+                                    console.log("CLASS IN SESSION")
+                                    avaliablity = "Class in session"
+                                } else {
+                                    avaliablity = "open"
+                                    console.log("OPEN")
+                                }
+                                res.render('../views/room.ejs', {
+                                    machines: machines,
+                                    room: room,
+                                    building: req.params.building,
+                                    avaliablity: avaliablity
+                                });
+                            });
+
                     });
             } else {
                 res.render('../views/error.ejs', {error: "invalid url"})
