@@ -52,6 +52,7 @@ router.get('/:building/:room', function(req, res) {
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
+                    if (machines.length > 0) {
                         var avaliablity = "";
                         let calendar = google.calendar('v3');
                         calendar.events.list({
@@ -77,6 +78,14 @@ router.get('/:building/:room', function(req, res) {
                                     avaliablity: avaliablity
                                 });
                             });
+                        } else {
+                            res.render('../views/room.ejs', {
+                                machines: machines,
+                                room: room,
+                                building: req.params.building,
+                                avaliablity: avaliablity
+                            });
+                        }
 
                     });
             } else {
