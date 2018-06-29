@@ -25,11 +25,12 @@ app.use(session({
     cookie: {secure: false, maxAge: 60000}
 }));
 
+app.use('/authorize', authorize);
 app.use('/', index);
 app.use('/', buildings);
 app.use('/', rooms);
 app.use('/', machines);
-app.use('/authorize', authorize);
+
 
 var port = 3000;
 

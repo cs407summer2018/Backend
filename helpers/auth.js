@@ -1,3 +1,5 @@
+var config = require('../config/knex/knexfile');
+var knex = require('knex')(config);
 const jwt = require('jsonwebtoken');
 
 const credentials = {
@@ -35,9 +37,22 @@ async function getTokenFromCode(auth_code, res) {
 }
 
 function saveValuesToCookie(token, res) {
-  // Parse the identity token
   console.log("saveVtoC");
+
   var user = jwt.decode(token.token.id_token);
+  var email = user.preferred_username;
+  var username = email.substr(0, email.indexOf('@'));
+  var address = email.substr(email.indexOf('@'), email.lanth);
+  var error = "Please login using a '@purdue.edu' email.";
+
+  if (address != '@purdue.edu') {
+    res.render('../views/error.ejs', {error: error});
+  } else {
+    knex('user').insert({email: email, name: username}).catch(function(err) {
+      console.log("User already created.");
+    });
+  }
+
   // Save the access token in a cookie
   res.cookie('graph_access_token', token.token.access_token, {maxAge: 3600000, httpOnly: true});
   // Save the user's name in a cookie
@@ -57,7 +72,7 @@ function clearCookies(res) {
 }
 
 async function getAccessToken(cookies, res) {
-  
+
   if (cookies) {  
     var token = cookies.graph_access_token;
   }

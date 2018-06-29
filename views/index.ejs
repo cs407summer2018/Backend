@@ -1,11 +1,12 @@
+<!-- views/index.ejs -->
+
 <!DOCTYPE html>
 <html>
   <body>
 
     <div class="jumbotron">
-      <h1>Node Graph Tutorial</h1>
-      <p class="lead">This sample app shows how to use the Microsoft Graph API to access Outlook data from Node.js</p>
-      
+      <h1>Purde Lab Stats</h1>
+
         <p>Welcome</p>
 
        <% console.log(debug); %>
@@ -13,10 +14,9 @@
           <p><%= user %></p>
        <% } else {%>
           <p>not logged in</p>
-          <%= signInUrl%>
+          <%= signInUrl %>
        <% } %>
        
-        
         <a class="btn btn-primary btn-large" href="<%= signInUrl %>">Click here to login</a>
      
     </div>
