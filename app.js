@@ -7,12 +7,15 @@ var buildings = require('./routes/buildings');
 var rooms = require('./routes/rooms')
 var machines = require('./routes/machines')
 
+//app.set('view engine', 'ejs');
+
 var port = 3000;
 
 app.listen(port);
 
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/views/index.html');
+app.get('/', function(req, res) {
+	//res.render('/views/index');
+	res.render(__dirname + '/views/index.ejs');
 });
 
 app.use(bodyParser.json());
