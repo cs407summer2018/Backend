@@ -1,6 +1,5 @@
 // knexfile.js
 
-
 module.exports = {
 	client: 'mysql',
 	connection: {

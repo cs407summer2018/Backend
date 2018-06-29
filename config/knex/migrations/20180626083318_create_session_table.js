@@ -11,7 +11,7 @@ exports.up = function(knex, Promise) {
         table.integer('pid').notNullable()
         table.dateTime('start_time').notNullable()
         table.dateTime('end_time')
-        table.timestamps()
+        table.timestamps(true, true)
     })
 };
 
