@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
+var config = require('../config/knex/knexfile')
+var knex = require('knex')(config)
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
@@ -21,7 +23,15 @@ router.get('/', async function(req, res, next) {
     parms.user = null;
   }
 
-  res.render('index.ejs', parms);
+  knex.select().from('building')
+  .rightOuterJoin('room', 'building.id', 'room.building_id')
+  .then(function(rooms) {
+    parms.rooms = rooms
+    console.log(parms);
+    res.render('index.ejs', parms);
+  })
+
+  
 });
 
 module.exports = router;
