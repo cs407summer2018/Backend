@@ -14,24 +14,55 @@ router.post('/addRoom', function(req, res) {
 
 router.get('/:building/:room', function(req, res) {
     
-    knex.select().from('machine').where('room_id', function() {
-        this.select('id').from('room')
-        .where('room_number', req.params.room)
-        .andWhere('building_id', function() {
-            this.select('id').from('building').where('abbrev', req.params.building);
-        });
-    }).then(function(machines) {
-        console.log(machines)
-        if (machines.length > 0 ) {
-            //res.sendFile(path.join(__dirname, '../views', 'labdetails.html'));
+    // Check if building has machines'
+
+    return knex.select().from('building')
+        .rightOuterJoin('room', 'building.id', 'room.building_id')
+        .where('abbrev', req.params.building)
+        .andWhere('room_number', req.params.room).first()
+        .then(function(room) {
+            if (room != undefined) {
+                knex.select().from('building')
+                    .rightOuterJoin('room', 'building.id', 'room.building_id')
+                    .rightOuterJoin('machine', 'room.id', 'machine.room_id')
+                    .where('abbrev', req.params.building)
+                    .andWhere('room_number', req.params.room)
+                    .then(function(machines) {
+                        res.render('../views/room.ejs', {
+                            machines: machines,
+                            room: room,
+                            building: req.params.building
+                        });
+                    });
+            } else {
+                res.render('../views/error.ejs', {error: "invalid url"})
+            }
+        })
+
+
+    knex.select().from('building')
+    .rightOuterJoin('room', 'building.id', 'room.building_id')
+    .rightOuterJoin('machine', 'room.id', 'machine.room_id')
+    .where('abbrev', req.params.building)
+    .andWhere('room_number', req.params.room)
+    .then(function(machines) {
+        console.log(machines);
+        console.log(room);
+        if (room != undefined) {
             res.render('../views/room.ejs', {
-                machines: machines, 
-                room: req.params.room, 
-                building: req.params.building});
+                machines: machines,
+                room: room,
+                building: req.params.building
+            });
         } else {
-            res.sendFile(path.join(__dirname, '../views', 'error.html'));
+            res.render('../views/error.ejs', {error: 'invalid url'});
         }
+
+ 
     });
+
+ 
+
 
 });
 
