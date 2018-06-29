@@ -19,7 +19,7 @@ router.get('/:building', function(req, res) {
         if (rooms.length > 0 ) {
             res.render('../views/building.ejs', {rooms: rooms, building: req.params.building});
         } else {
-            res.sendFile(path.join(__dirname, '../views', 'error.html'));
+            res.render('../views/error.ejs', {error: "invalid url"})
         }
     });  
 })
