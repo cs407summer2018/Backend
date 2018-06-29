@@ -13,15 +13,11 @@ router.post('/addBuilding', function(req, res) {
 })
 
 router.get('/:building', function(req, res) {
-
     knex.select().from('room').where('building_id', function() {
         this.select('id').from('building').where('abbrev', req.params.building).first();
     }).then(function(rooms) {
-        res.sendFile(path.join(__dirname, '../views', 'buildings.html'));
-    });
-    
+        res.render('../views/building.ejs', {rooms: rooms, building: req.params.building});
+    });  
 })
-
-
 
 module.exports = router;
