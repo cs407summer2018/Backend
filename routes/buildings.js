@@ -16,7 +16,7 @@ router.get('/:building', function(req, res) {
     knex.select().from('room').where('building_id', function() {
         this.select('id').from('building').where('abbrev', req.params.building).first();
     }).then(function(rooms) {
-        res.render('../views/buildings.ejs', {rooms: rooms, building: req.params.building});
+        res.render('../views/building.ejs', {rooms: rooms, building: req.params.building});
     });  
 })
 

@@ -23,7 +23,11 @@ router.get('/:building/:room', function(req, res) {
     }).then(function(machines) {
         console.log(machines)
         if (machines.length > 0 ) {
-            res.sendFile(path.join(__dirname, '../views', 'labdetails.html'));
+            //res.sendFile(path.join(__dirname, '../views', 'labdetails.html'));
+            res.render('../views/room.ejs', {
+                machines: machines, 
+                room: req.params.room, 
+                building: req.params.building});
         } else {
             res.sendFile(path.join(__dirname, '../views', 'error.html'));
         }

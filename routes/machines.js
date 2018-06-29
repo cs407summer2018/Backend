@@ -30,22 +30,25 @@ router.post('/addMachine', function(req, res) {
 })
 
 router.get('/:building/:room/:machine', function(req, res) {
+    
 
-    knex.select().from('machine').where('name', req.params.machine).andWhere('room_id', function() {
+    knex.select().from('machine').innerJoin('specifications', 'machine.room_id', 'specifications.id')
+    .where('name', req.params.machine)
+    .andWhere('machine.room_id', function() {
         this.select('id').from('room').where('room_number', req.params.room)
         .andWhere('building_id', function() {
             this.select('id').from('building').where('abbrev', req.params.building);
         })
-    }).then(function(machine) {
-        if (machine.length > 0) {
-            res.sendFile(path.join(__dirname, '../views', 'machines.html'));
+    }).first()
+    .then(function(machine) {
+        console.log(machine);
+        if (machine != undefined) {
+            res.render('../views/machine.ejs', {machine: machine, building: req.params.building});
         } else {
             res.sendFile(path.join(__dirname, '../views', 'error.html'));
         }
-    });
-
-
-
+    })
+    
 });
 
 module.exports = router
