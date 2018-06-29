@@ -16,7 +16,11 @@ router.get('/:building', function(req, res) {
     knex.select().from('room').where('building_id', function() {
         this.select('id').from('building').where('abbrev', req.params.building).first();
     }).then(function(rooms) {
-        res.render('../views/building.ejs', {rooms: rooms, building: req.params.building});
+        if (rooms.length > 0 ) {
+            res.render('../views/building.ejs', {rooms: rooms, building: req.params.building});
+        } else {
+            res.sendFile(path.join(__dirname, '../views', 'error.html'));
+        }
     });  
 })
 

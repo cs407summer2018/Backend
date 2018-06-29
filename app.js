@@ -10,6 +10,7 @@ require('dotenv').config();
 var buildings = require('./routes/buildings');
 var rooms = require('./routes/rooms');
 var machines = require('./routes/machines');
+var sessions = require('./routes/sessions');
 var index = require('./routes/index');
 var authorize = require('./routes/authorize');
 
@@ -27,9 +28,10 @@ app.use(session({
 
 app.use('/authorize', authorize);
 app.use('/', index);
-app.use('/', buildings);
 app.use('/', rooms);
 app.use('/', machines);
+app.use('/', sessions);
+app.use('/', buildings);
 
 
 var port = 3000;

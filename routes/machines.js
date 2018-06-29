@@ -31,24 +31,31 @@ router.post('/addMachine', function(req, res) {
 
 router.get('/:building/:room/:machine', function(req, res) {
     
-
-    knex.select().from('machine').innerJoin('specifications', 'machine.room_id', 'specifications.id')
-    .where('name', req.params.machine)
-    .andWhere('machine.room_id', function() {
-        this.select('id').from('room').where('room_number', req.params.room)
+    return knex.select().from('machine')
+        .rightOuterJoin('room', 'machine.room_id', 'room.id')
+        .rightOuterJoin('specifications', 'room.id', 'specifications.room_id')
+        .where('machine.name', req.params.machine)
+        .andWhere('room.room_number', req.params.room)
         .andWhere('building_id', function() {
             this.select('id').from('building').where('abbrev', req.params.building);
+        }).first()
+        .then(function(machine) {     
+            if (machine != undefined) {
+                knex.select().from('session').whereNull('end_time').andWhere('machine_id', function() {
+                    this.select('id').from('machine').where('machine.name', machine.name);
+                }).first()
+                .then(function(session){
+                    if (session == undefined) {
+                        res.render('../views/machine.ejs', {machine: machine, building: req.params.building, session: "not in use"});
+                    } else {
+                        res.render('../views/machine.ejs', {machine: machine, building: req.params.building, session: "in use"});
+                    }
+                })
+            } else {
+                res.render('../views/error.ejs', {error: "invalid url"})
+            }
         })
-    }).first()
-    .then(function(machine) {
-        console.log(machine);
-        if (machine != undefined) {
-            res.render('../views/machine.ejs', {machine: machine, building: req.params.building});
-        } else {
-            res.sendFile(path.join(__dirname, '../views', 'error.html'));
-        }
-    })
-    
+      
 });
 
 module.exports = router
