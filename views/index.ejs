@@ -1,35 +1,42 @@
 <!-- views/index.ejs -->
 
 <!DOCTYPE html>
-<html>
-  <body>
+<html lang="en">
 
-    <div class="jumbotron">
-      <h1>Purde Lab Stats</h1>
+  <head>
+    <% include ./partials/head %>
+  </head>
 
+  <body class="container">
+
+    <header>
+      <% include ./partials/header %>
+    </header>
+    <main>
+      <div class="jumbotron">
+        <h1>Purde Lab Stats</h1>
         <p>Welcome</p>
-
-             <% if (user != undefined) { %>
-                <p><%= user %></p>
-             <% } else {%>
-                <p>not logged in</p>
-                <%= signInUrl %>
-             <% } %>
-       
-        <a class="btn btn-primary btn-large" href="<%= signInUrl %>">Click here to login</a>
-
+        <% console.log(debug); %>
         <ul>
-            <% rooms.forEach((room) => { %>
-                <!--
-                    List of all labs for that building
-                    Links to each room page
-                    Avaliablity [class in session, full, open]
-                -->
-                <li><a href="/<%= room.abbrev %>/<%= room.room_number %>"><%= room.room_number %></a></li>
-            <% }) %>
-            </ul>
-     
-    </div>
+          <% rooms.forEach((room) => { %>
+          <!--List of all labs for that building
+              Links to each room page
+              Avaliablity [class in session, full, open] -->
+          <li>
+            <a href="/<%= room.abbrev %>/<%= room.room_number %>">
+              <%= room.room_number %>
+            </a>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+    </main>
+
+
+    <footer>
+      <% include ./partials/footer %>
+    </footer>
 
   </body>
+
 </html>
