@@ -4,19 +4,24 @@ var authHelper = require('../helpers/auth');
 var config = require('../config/knex/knexfile')
 var knex = require('knex')(config)
 
+const util = require('util')
+
+
+
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   let parms = { title: 'Home', active: { home: true } };
-  const accessToken = await authHelper.getAccessToken(req.cookie, res);
+  const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
   let userName;
-  if (req.cookie) {
-    userName = req.cookie.graph_user_name;
+  if (req.cookies) {
+    userName = req.cookies.graph_user_name;
   } 
 
   if (accessToken && userName) {
     parms.user = userName;
     parms.debug = `User: ${userName}\nAccess Token: ${accessToken}`;
+    parms.signInUrl = null;
   } else {
     parms.signInUrl = authHelper.getAuthUrl();
     parms.debug = parms.signInUrl;
@@ -27,11 +32,8 @@ router.get('/', async function(req, res, next) {
   .rightOuterJoin('room', 'building.id', 'room.building_id')
   .then(function(rooms) {
     parms.rooms = rooms
-    console.log(parms);
     res.render('index.ejs', parms);
   })
-
-  
 });
 
 module.exports = router;
