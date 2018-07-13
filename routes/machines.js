@@ -22,7 +22,7 @@ router.post('/addMachine', function(req, res) {
 
     console.log(machines);
     
-    knex('machine').insert(machines).then(function(result) {
+    knex('machines').insert(machines).then(function(result) {
         res.json({sucess: true})
     }).catch(function(err) {
         res.json(err);
@@ -31,18 +31,18 @@ router.post('/addMachine', function(req, res) {
 
 router.get('/:building/:room/:machine', function(req, res) {
     
-    return knex.select().from('machine')
-        .rightOuterJoin('room', 'machine.room_id', 'room.id')
-        .rightOuterJoin('specifications', 'room.id', 'specifications.room_id')
-        .where('machine.name', req.params.machine)
-        .andWhere('room.room_number', req.params.room)
+    return knex.select().from('machines')
+        .rightOuterJoin('rooms', 'machines.room_id', 'rooms.id')
+        .rightOuterJoin('specifications', 'rooms.id', 'specifications.room_id')
+        .where('machines.name', req.params.machine)
+        .andWhere('rooms.room_number', req.params.room)
         .andWhere('building_id', function() {
-            this.select('id').from('building').where('abbrev', req.params.building);
+            this.select('id').from('buildings').where('abbrev', req.params.building);
         }).first()
         .then(function(machine) {     
             if (machine != undefined) {
-                knex.select().from('session').whereNull('end_time').andWhere('machine_id', function() {
-                    this.select('id').from('machine').where('machine.name', machine.name);
+                knex.select().from('usages').whereNull('end_time').andWhere('machine_id', function() {
+                    this.select('id').from('machines').where('machines.name', machine.name);
                 }).first()
                 .then(function(session){
                     if (session == undefined) {

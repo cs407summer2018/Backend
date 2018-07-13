@@ -7,8 +7,6 @@ var path = require('path')
 var {google} = require('googleapis');
 var privatekey = require("../config/privatekey.json");
 
-
-
 // configure a JWT auth client
 let jwtClient = new google.auth.JWT(
     privatekey.client_email,
@@ -27,6 +25,29 @@ return;
 }
 });
 
+router.post('/rooms/availability', function(req, res) {
+    var avaliablity = "";
+    var google_calander_id = req.body.google_calander_id
+    let calendar = google.calendar('v3');
+    calendar.events.list({
+        auth: jwtClient,
+        calendarId: google_calender_id,
+        timeMin: (new Date()).toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: 'startTime',}, 
+        function (err, response) {
+            var startTime = new Date(response.data.items[0].start.dateTime);
+            var endTime = new Date(response.data.items[0].end.dateTime);
+            var timeNow = new Date();
+            if (startTime <= timeNow && timeNow <= endTime) {
+                avaliablity = "Class In Session"
+            } else {
+                avaliablity = "Open"
+            }
+        });
+    res.json({avaliablity: avaliablity})
+});
 
 router.post('/addRoom', function(req, res) {
     knex('room').insert(req.body).then(function(result) {
@@ -40,15 +61,15 @@ router.get('/:building/:room', function(req, res) {
     
     // Check if building has machines'
 
-    return knex.select().from('building')
-        .rightOuterJoin('room', 'building.id', 'room.building_id')
+    return knex.select().from('buildings')
+        .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
         .where('abbrev', req.params.building)
         .andWhere('room_number', req.params.room).first()
         .then(function(room) {
             if (room != undefined) {
-                knex.select().from('building')
-                    .rightOuterJoin('room', 'building.id', 'room.building_id')
-                    .rightOuterJoin('machine', 'room.id', 'machine.room_id')
+                knex.select().from('buildings')
+                    .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
+                    .rightOuterJoin('machines', 'rooms.id', 'machines.room_id')
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
@@ -94,9 +115,9 @@ router.get('/:building/:room', function(req, res) {
         })
 
 
-    knex.select().from('building')
-    .rightOuterJoin('room', 'building.id', 'room.building_id')
-    .rightOuterJoin('machine', 'room.id', 'machine.room_id')
+    knex.select().from('buildings')
+    .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
+    .rightOuterJoin('machines', 'rooms.id', 'machines.room_id')
     .where('abbrev', req.params.building)
     .andWhere('room_number', req.params.room)
     .then(function(machines) {
