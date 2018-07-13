@@ -10,7 +10,23 @@ const util = require('util')
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  let parms = { title: 'Home', active: { home: true } };
+  let parms = { title: 'Home', active: { home: true }, 
+    rows: [
+    {
+      building: 'LWSN', room: 'B131', machineName: 'sac', OS: 'Linux', Availability: 'Open', Fraction: '3/26'
+    },
+    {
+      building: 'LWSN', room: 'B146', machineName: 'moore', OS: 'Linux', Availability: 'Open', Fraction: '1/25'
+    },
+    {
+      building: 'HAAS', room: 'G040', machineName: 'pod', OS: 'Linux', Availability: 'Full', Fraction: '26/26'
+    },
+    {
+      building: 'LWSN', room: 'G056', machineName: 'sslab', OS: 'Linux', Availability: 'Open', Fraction: '10/26'
+    }
+    ]
+  }
+  
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
   let userName;
@@ -32,6 +48,8 @@ router.get('/', async function(req, res, next) {
   .rightOuterJoin('room', 'building.id', 'room.building_id')
   .then(function(rooms) {
     parms.rooms = rooms
+    
+
     res.render('index.ejs', parms);
   })
 });
