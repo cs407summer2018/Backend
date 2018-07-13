@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+  <% include ./partials/head %>
 </head>
 <body class="container">
 
@@ -16,6 +16,35 @@
         <h1><%= building + " " + room.room_number %></h1>
         <p>Avaliablity: <%= avaliablity %></p>
         <ul>
+
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              
+              <th scope="col">Machine</th>
+
+              
+            </tr>
+          </thead>
+          <tbody>
+          
+            
+            
+            <% machines.forEach((machine) => { %>
+              <tr>
+
+                <td><a href="/<%= building %>/<%= room.room_number %>/<%= machine.name %>"><%= machine.name %></a></td>
+
+              </tr>
+
+            <% }) %>
+            </ul>
+
+          
+          </tbody>
+        </table>
+
+
         <% machines.forEach((machine) => { %>
             <!--
                 List of all machines for that room
@@ -35,6 +64,7 @@
 </main>
 
 <footer>
+  <% include ./partials/footer %>
 </footer>
 
 </body>
