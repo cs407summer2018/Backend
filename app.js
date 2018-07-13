@@ -7,12 +7,14 @@ var session = require('express-session');
 
 require('dotenv').config();
 
+var favorite = require('./routes/favorite');
 var buildings = require('./routes/buildings');
 var rooms = require('./routes/rooms');
 var machines = require('./routes/machines');
 var sessions = require('./routes/sessions');
 var index = require('./routes/index');
 var authorize = require('./routes/authorize');
+
 
 
 app.engine('html', require('ejs').renderFile);
@@ -27,12 +29,17 @@ app.use(session({
     cookie: {secure: false, maxAge: 60000}
 }));
 
+
+app.use(express.static('public'));
+app.use('/favorite', favorite);
 app.use('/authorize', authorize);
 app.use('/', index);
 app.use('/', rooms);
 app.use('/', machines);
 app.use('/', sessions);
 app.use('/', buildings);
+
+
 
 var port = 3000;
 

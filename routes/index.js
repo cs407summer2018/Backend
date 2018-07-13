@@ -7,9 +7,31 @@ var knex = require('knex')(config)
 const util = require('util')
 
 
+var {google} = require('googleapis');
+var privatekey = require("../config/privatekey.json");
+
+// configure a JWT auth client
+let jwtClient = new google.auth.JWT(
+    privatekey.client_email,
+    null,
+    privatekey.private_key,
+    ['https://www.googleapis.com/auth/spreadsheets',
+     'https://www.googleapis.com/auth/drive',
+     'https://www.googleapis.com/auth/calendar']);
+
+jwtClient.authorize(function (err, tokens) {
+if (err) {
+    console.log(err);
+return;
+} else {
+    console.log("Successfully connected!");
+}
+});
+
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
+  console.log(typeof req.next);
   let parms = { title: 'Home', active: { home: true }, 
     rows: [
     {
@@ -34,9 +56,10 @@ router.get('/', async function(req, res, next) {
     userName = req.cookies.graph_user_name;
   } 
 
+
   if (accessToken && userName) {
     parms.user = userName;
-    parms.debug = `User: ${userName}\nAccess Token: ${accessToken}`;
+    parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
     parms.signInUrl = null;
   } else {
     parms.signInUrl = authHelper.getAuthUrl();
@@ -44,14 +67,32 @@ router.get('/', async function(req, res, next) {
     parms.user = null;
   }
 
-  knex.select().from('building')
-  .rightOuterJoin('room', 'building.id', 'room.building_id')
+  knex.select().from('buildings')
+  .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
   .then(function(rooms) {
-    parms.rooms = rooms
-    
-
+    parms.rows = rooms
+    console.log(parms);
     res.render('index.ejs', parms);
-  })
-});
+  }).catch(function(err) {
+    res.json({error: 'error3'});
+  });
 
+});
+/**
+ * 
+ * 
+
+rooms.forEach(function(room) {
+  knex.select('name').from('machines').where('room_id', room.id).first()
+  .then(function(result) {
+    if (result != undefined) {
+      room.machineName = result.name;
+    }
+    knex.select('OS').from('specifications').where('room_id', room.id).first()
+    .then(function(result) {
+      room.OS = result.OS;
+    })
+  })
+})
+*/
 module.exports = router;

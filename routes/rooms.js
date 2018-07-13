@@ -7,8 +7,6 @@ var path = require('path')
 var {google} = require('googleapis');
 var privatekey = require("../config/privatekey.json");
 
-
-
 // configure a JWT auth client
 let jwtClient = new google.auth.JWT(
     privatekey.client_email,
@@ -27,6 +25,27 @@ return;
 }
 });
 
+router.post('/avaliablity', function(req, res) {
+    var avaliablity = "";
+    let calendar = google.calendar('v3');
+    calendar.events.list({
+        auth: jwtClient,
+        calendarId: machines[0].google_calender_id,
+        timeMin: (new Date()).toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: 'startTime',}, 
+        function (err, response) {
+            var startTime = new Date(response.data.items[0].start.dateTime);
+            var endTime = new Date(response.data.items[0].end.dateTime);
+            var timeNow = new Date();
+            if (startTime <= timeNow && timeNow <= endTime) {
+                avaliablity = "Class In Session"
+            } else {
+                avaliablity = "Open"
+            }
+        });
+});
 
 router.post('/addRoom', function(req, res) {
     knex('room').insert(req.body).then(function(result) {
