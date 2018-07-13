@@ -65,15 +65,15 @@ function saveValuesToCookie(token, res) {
 
 function clearCookies(res) {
   // Clear cookies
-  // res.clearCookie('graph_access_token', {maxAge: 3600000, httpOnly: true});
-  // res.clearCookie('graph_user_name', {maxAge: 3600000, httpOnly: true});
-  // res.clearCookie('graph_refresh_token', {maxAge: 7200000, httpOnly: true});
-  // res.clearCookie('graph_token_expires', {maxAge: 3600000, httpOnly: true});
+  res.clearCookie('graph_access_token', {maxAge: 3600000, httpOnly: true});
+  res.clearCookie('graph_user_name', {maxAge: 3600000, httpOnly: true});
+  res.clearCookie('graph_refresh_token', {maxAge: 7200000, httpOnly: true});
+  res.clearCookie('graph_token_expires', {maxAge: 3600000, httpOnly: true});
 }
 
 async function getAccessToken(cookies, res) {
 
-  if (cookies) {  
+  if (cookies) {
     var token = cookies.graph_access_token;
   }
   if (token) {
@@ -86,7 +86,7 @@ async function getAccessToken(cookies, res) {
       return token;
     }
   }
-  
+
   if (refresh_token) {
     var refresh_token = cookies.graph_refresh_token;
     var newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
