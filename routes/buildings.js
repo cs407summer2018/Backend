@@ -41,8 +41,37 @@ router.get('/:building', async function(req, res, next) {
   .then(function(rooms) {
     console.log(rooms);
     if (rooms.length > 0 ) {
-       
-        res.render('../views/building.ejs', {rooms: rooms, building: req.params.building, parms: parms});
+        knex.raw('select id, room_id, count(room_id) as occurances from machines where id in \
+    (select distinct machine_id as id from usages \
+     where end_time is null and \
+     machine_id in (select id from machines where room_id in (select id from rooms)) \
+     order by machine_id) \
+    group by room_id \
+    order by room_id;').then(function(results) {
+      rooms.forEach(function(room) {
+        var room_id = room.id;
+        var asd = results[0];
+        console.log(asd);
+        var filtered_row = asd.filter(function(row){
+          console.log(row.room_id);
+          console.log(room_id);
+          return row.room_id === room_id;
+        })
+        if (filtered_row.length == 0) {
+          console.log(filtered_row);
+          console.log(filtered_row.lenth);
+          room.occurances = 0;
+        } else {
+          var occurances = filtered_row[0].occurances;
+          room.occurances = occurances;
+        }
+      })
+      console.log(rooms);
+      parms.rows = rooms
+  
+      res.render('../views/building.ejs', {rooms: rooms, building: req.params.building, parms: parms});
+    })
+        
     } else {
         res.render('../views/error.ejs', {error: "invalid url"})
     }

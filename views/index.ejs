@@ -15,6 +15,7 @@
     <main>
       <div class="jumbotron">
           <div align="center">
+              <p id='row_length' display="none"><%= rows.length %></p>
               <h1>Purdue Lab Stats</h1>
               <p>Welcome</p>
               <% console.log(debug); %>
@@ -52,7 +53,9 @@
           </thead>
           <tbody id="myTable2">
 
-            <% rows.forEach((row) => { %>
+            
+
+            <% rows.forEach((row, idx) => { %>
 
                 <tr>
                   <% if (user) { %>
@@ -61,7 +64,7 @@
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td class='availability'><%= row.availability %></td>
+                    <td id="availability<%= idx %>"><%= row.availability %></td>
                     <td><%= row.occurances %></td>
                     <td><%= row.capacity %></td>
                   <% } else { %>
@@ -69,7 +72,7 @@
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td class='availability'><%= row.availability %></td>
+                    <td id="availability<%= idx %>"><%= row.availability %></td>
                     <td><%= row.occurances %></td>
                     <td><%= row.capacity %></td>
                   <% } %>
@@ -89,9 +92,20 @@
               $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
           });
+          var num_rows = $("#row_length").text
+          //alert('hello1');
+          var i;
+          for(i = 0; i < num_rows; i++) {
+            alert('hello2');
+            $("#availability0").onload(function() {
+
+            })
+          }
         });
 
      
+       
+       
 
         $(".favorite").click(function() {
           
