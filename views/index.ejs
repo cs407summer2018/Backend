@@ -15,7 +15,6 @@
     <main>
       <div class="jumbotron">
           <div align="center">
-              <p id='row_length' display="none"><%= rows.length %></p>
               <h1>Purdue Lab Stats</h1>
               <p>Welcome</p>
               <% console.log(debug); %>
@@ -59,7 +58,8 @@
 
                 <tr>
                   <% if (user) { %>
-                    <td class='favorite'>fave</td>
+                    
+                    <td class='favorite'><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span></td>
                     <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
