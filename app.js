@@ -14,8 +14,12 @@ var sessions = require('./routes/sessions');
 var index = require('./routes/index');
 var authorize = require('./routes/authorize');
 
-
-
+var https = require('https');
+var fs = require('fs');
+var options = {
+  key: fs.readFileSync('./privatekey.pem'),
+  cert: fs.readFileSync('./server.crt')
+};
 
 app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json());
@@ -36,9 +40,10 @@ app.use('/', machines);
 app.use('/', sessions);
 app.use('/', buildings);
 
-
 var port = 3000;
 
 app.listen(port);
+
+https.createServer(options, app).listen(443);
 
 module.exports = app;
