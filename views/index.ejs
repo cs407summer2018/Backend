@@ -14,11 +14,14 @@
     </header>
     <main>
       <div class="jumbotron">
-        <h1>Purde Lab Stats</h1>
-        <p>Welcome</p>
-        <% console.log(debug); %>
-
-        <p>Type something in the input field to search the table</p>  
+          <div align="center">
+              <h1>Purdue Lab Stats</h1>
+              <p>Welcome</p>
+              <% console.log(debug); %>
+      
+              <p>Type something in the input field to search the table</p>  
+            </div>
+       
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
         <br>
 
@@ -32,14 +35,16 @@
                 <th scope="col" onclick="sortTable(3)">Machine Name</th>
                 <th scope="col" onclick="sortTable(4)">OS</th>
                 <th scope="col" onclick="sortTable(5)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Fraction</th>
+                <th scope="col" onclick="sortTable(6)">Occupants</th>
+                <th scope="col" onclick="sortTable(6)">Capacity</th>
               <% } else { %>
                 <th scope="col" onclick="sortTable(0)">Building</th>
                 <th scope="col" onclick="sortTable(1)">Room</th>
                 <th scope="col" onclick="sortTable(2)">Machine Name</th>
                 <th scope="col" onclick="sortTable(3)">OS</th>
                 <th scope="col" onclick="sortTable(4)">Availability</th>
-                <th scope="col" onclick="sortTable(5)">Fraction</th>
+                <th scope="col" onclick="sortTable(6)">Occupants</th>
+                <th scope="col" onclick="sortTable(6)">Capacity</th>
               <% } %>
               
               
@@ -52,19 +57,21 @@
                 <tr>
                   <% if (user) { %>
                     <td class='favorite'>fave</td>
-                    <td><%= row.name %></td>
-                    <td class='room'><%= row.room_number %></td>
+                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td><%= row.Availability %></td>
-                    <td><%= row.Fraction %></td>
+                    <td class='availability'><%= row.availability %></td>
+                    <td><%= row.occurances %></td>
+                    <td><%= row.capacity %></td>
                   <% } else { %>
-                    <td><%= row.name %></td>
-                    <td class='room'><%= row.room_number %></td>
+                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td><%= row.Availability %></td>
-                    <td><%= row.Fraction %></td>
+                    <td class='availability'><%= row.availability %></td>
+                    <td><%= row.occurances %></td>
+                    <td><%= row.capacity %></td>
                   <% } %>
                    
                 </tr>
@@ -84,15 +91,10 @@
           });
         });
 
-        $(document).ready(function() {
-        $("#aval").click(function () {
-            $.get('/test', function(res) {
-                alert(res.msg)
-            })
-          });
-        });
+     
 
         $(".favorite").click(function() {
+          
           var $row = $(this).closest("tr");    // Find the row
           var $text = $row.find(".room").text(); // Find the text
         
@@ -100,6 +102,8 @@
             room: $text,
             favorite: 1 // this variable is dependent on the color
           }
+
+          alert($text);
 
           $.ajax({
             type: "POST",

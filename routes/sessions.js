@@ -15,7 +15,7 @@ router.post('/removeSession', function(req, res) {
 })
 
 router.post('/getUsage', function(req, res) {
-    knex.select().from('session').whereNull('end_time').andWhere('machine_id', req.body.machine_id).first()
+    knex.select().from('sessions').whereNull('end_time').andWhere('machine_id', req.body.machine_id).first()
     .then(function(session) {
         if (session == undefined) {
             res.json({machine_usage: false})

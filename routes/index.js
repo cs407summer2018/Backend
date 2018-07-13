@@ -70,14 +70,78 @@ router.get('/', async function(req, res, next) {
   knex.select().from('buildings')
   .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
   .then(function(rooms) {
-    parms.rows = rooms
-    console.log(parms);
-    res.render('index.ejs', parms);
+    knex.raw('select id, room_id, count(room_id) as occurances from machines where id in \
+    (select distinct machine_id as id from usages \
+     where end_time is null and \
+     machine_id in (select id from machines where room_id in (select id from rooms)) \
+     order by machine_id) \
+    group by room_id \
+    order by room_id;').then(function(results) {
+      rooms.forEach(function(room) {
+        var room_id = room.id;
+        var asd = results[0];
+        console.log(asd);
+        var filtered_row = asd.filter(function(row){
+          console.log(row.room_id);
+          console.log(room_id);
+          return row.room_id === room_id;
+        })
+        if (filtered_row.length == 0) {
+          console.log(filtered_row);
+          console.log(filtered_row.lenth);
+          room.occurances = 0;
+        } else {
+          var occurances = filtered_row[0].occurances;
+          room.occurances = occurances;
+        }
+      })
+      console.log(rooms);
+      parms.rows = rooms
+  
+      res.render('index.ejs', parms);
+    })
+
   }).catch(function(err) {
     res.json({error: 'error3'});
   });
 
 });
+ 
+
+
+
+var recurse = function (rooms, idx, req, res, parms) {
+  if (idx < rooms.length) {
+    var room = rooms[idx];
+    // make api call for room
+    var avaliablity = "";
+    let calendar = google.calendar('v3');
+    calendar.events.list({
+        auth: jwtClient,
+        calendarId: room.google_calender_id,
+        timeMin: (new Date()).toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: 'startTime',}, 
+        function (err, response) {
+            var startTime = new Date(response.data.items[0].start.dateTime);
+            var endTime = new Date(response.data.items[0].end.dateTime);
+            var timeNow = new Date();
+            if (startTime <= timeNow && timeNow <= endTime) {
+                avaliablity = "Class In Session"
+            } else {
+                avaliablity = "Open"
+            }
+            room.avaliablity = avaliablity;
+            console.log(avaliablity);
+            recurse(rooms, idx+1, req, res, parms);
+        });
+  } else {
+    res.render('index.ejs', parms);
+  }
+}
+
+
 /**
  * 
  * 
