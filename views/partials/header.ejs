@@ -6,9 +6,15 @@
       <a class="navbar-brand" href="">Purdue Lab Stats</a>
       <ul class="nav navbar-nav">
         <li>
-          <div class="btn-nav">
-            <a class="btn btn-primary btn-small navbar-btn" href="<%= signInUrl %>">Click here to login</a>
-          </div>
+          <% if (user) { %>
+            <div class="btn-nav">
+              <a class="btn btn-primary btn-small navbar-btn" href="/authorize/signout"><%= user %>, Click here to signout</a>
+            </div>
+          <% } else { %>
+            <div class="btn-nav">
+              <a class="btn btn-primary btn-small navbar-btn" href="<%= signInUrl %>">Click here to login</a>
+            </div>
+          <% } %>
         </li>
         <li><a href="https://www.cs.purdue.edu/resources/facilities/labs.html">Instructional Labs</a>
         </li>
