@@ -4,6 +4,7 @@
 
 <!-- CSS (load bootstrap from a CDN) -->
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script type='text/javascript' src="/javascript/requests.js"></script>
@@ -14,4 +15,34 @@
   th {
     cursor: pointer;
   }
+  .responsiveCal {
+    position: relative;
+    padding-bottom: 75%;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .responsiveCal iframe {
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .responsiveParent {
+    min-width: 100px;
+  }
+
+  .responsiveImg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .halfer {
+  width: 49%;
+  display: inline-block;
+  }
+
 </style>
