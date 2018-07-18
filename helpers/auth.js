@@ -48,7 +48,7 @@ function saveValuesToCookie(token, res) {
   if (address != '@purdue.edu') {
     res.render('../views/error.ejs', {error: error});
   } else {
-    knex('user').insert({email: email, name: username}).catch(function(err) {
+    knex('users').insert({email: email, name: username}).catch(function(err) {
       console.log("User already created.");
     });
   }

@@ -7,7 +7,7 @@ var path = require('path');
 
 router.post('/addFavorite', async function(req, res, next) {
     var room = req.body.room;
-    var favorite = req.body.favorite;
+    var fav = req.body.favorite;
 
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
@@ -17,12 +17,23 @@ router.post('/addFavorite', async function(req, res, next) {
     }
 
     if (accessToken && userName) {
-        return knex('users').where('name', userName)
-        .update(room, favorite).then(function(result) {
-            res.json({sucess: true})
-        }).catch(function(err) {
-            res.json(err);
-        });
+        console.log("FAVORITE STRING: " + fav);
+        if (fav == 1) {
+            knex.raw('INSERT INTO favorites (user_id, room_id) VALUES ( \
+                (SELECT id FROM users WHERE name = \''+ userName +'\' ), \
+                (SELECT id FROM rooms WHERE room_number = \'' + room + '\') \
+                );').then(function() {
+                    res.json({sucess: true})
+            })
+        } else {
+            knex.raw('DELETE FROM favorites WHERE \
+                user_id = (SELECT id FROM users WHERE name = \'' + userName + '\') \
+                and room_id = (SELECT id FROM rooms WHERE room_number = \'' + room + '\');')
+                .then(function() {
+                    res.json({sucess: true}) 
+                })
+        }
+
     } else {
         res.json({sucess: false})
     }   

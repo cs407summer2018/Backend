@@ -1,8 +1,8 @@
 
 exports.up = function(knex, Promise) {
-    return knex.schema.createTable('room', function(table) {
+    return knex.schema.createTable('rooms', function(table) {
         table.increments('id').primary()
-        table.integer('building_id').unsigned().references('id').inTable('building')
+        table.integer('building_id').unsigned().references('id').inTable('buildings')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
         table.string('room_number').notNullable()
@@ -14,5 +14,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-    return knex.schema.dropTableIfExists('room')
+    return knex.schema.dropTableIfExists('rooms')
 };
