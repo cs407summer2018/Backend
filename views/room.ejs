@@ -13,7 +13,10 @@
 
 <main>
     <div class="jumbotron">
-        <h1><%= building + " " + room.room_number %></h1>
+        <h1><%= building + " " + room.room_number %>
+          <button type="button" class="btn btn-primary" onclick="myFunction()">Email to everyone in this lab room</button>
+          <p id="demo"></p>
+        </h1>
         <p>Avaliablity: <%= avaliablity %></p>
         <ul>
 
@@ -58,6 +61,12 @@
 <footer>
   <% include ./partials/footer %>
 </footer>
+
+<script>
+function myFunction() {
+  document.getElementById("demo").innerHTML = "Email button clicked";
+}
+</script>
 
 </body>
 </html>
