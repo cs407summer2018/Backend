@@ -84,13 +84,17 @@ router.get('/:building/:room', function(req, res) {
                             singleEvents: true,
                             orderBy: 'startTime',}, 
                             function (err, response) {
-                                var startTime = new Date(response.data.items[0].start.dateTime);
-                                var endTime = new Date(response.data.items[0].end.dateTime);
-                                var timeNow = new Date();
-                                if (startTime <= timeNow && timeNow <= endTime) {
-                                    avaliablity = "Class in session"
+                                if (err != undefined) {
+                                    avaliablity = 'ERROR';
                                 } else {
-                                    avaliablity = "open"
+                                    var startTime = new Date(response.data.items[0].start.dateTime);
+                                    var endTime = new Date(response.data.items[0].end.dateTime);
+                                    var timeNow = new Date();
+                                    if (startTime <= timeNow && timeNow <= endTime) {
+                                        avaliablity = "Class In Session"
+                                    } else {
+                                        avaliablity = "Open"
+                                    }
                                 }
                                 res.render('../views/room.ejs', {
                                     machines: machines,
