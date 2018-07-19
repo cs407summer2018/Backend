@@ -8,7 +8,7 @@ exports.up = function(knex, Promise) {
         table.integer('user_id').unsigned().references('id').inTable('users')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
-        table.integer('pid').notNullable()
+        table.string('device').notNullable()
         table.dateTime('start_time').notNullable()
         table.dateTime('end_time')
         table.timestamps(true, true)
