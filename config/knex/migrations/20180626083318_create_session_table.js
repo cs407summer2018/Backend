@@ -1,11 +1,11 @@
 
 exports.up = function(knex, Promise) {
-    return knex.schema.createTable('session', function(table) {
+    return knex.schema.createTable('usages', function(table) {
         table.increments('id').primary()
-        table.integer('machine_id').unsigned().references('id').inTable('machine')
+        table.integer('machine_id').unsigned().references('id').inTable('machines')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
-        table.integer('user_id').unsigned().references('id').inTable('user')
+        table.integer('user_id').unsigned().references('id').inTable('users')
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
         table.integer('pid').notNullable()
@@ -16,5 +16,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-    return knex.schema.dropTableIfExists('session')
+    return knex.schema.dropTableIfExists('usages')
 };

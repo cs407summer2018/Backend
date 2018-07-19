@@ -58,9 +58,23 @@
 
                 <tr>
                   <% if (user) { %>
-                    
-                    <td class='favorite'><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span></td>
-                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+
+                    <% if (row.favorited == 1) { %>
+                      <td class='favorite' style="color:#c28e0e">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="color:#c28e0e">
+                          </span>
+                        </div>
+                      </td>
+                    <% } else { %>
+                      <td class='favorite' style="color:black">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="visibility:none" style="color:black">
+                          </span>
+                        </div>
+                      </td>
+                    <% } %>
+                      <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
@@ -103,21 +117,27 @@
           }
         });
 
-     
-       
-       
-
         $(".favorite").click(function() {
           
           var $row = $(this).closest("tr");    // Find the row
           var $text = $row.find(".room").text(); // Find the text
         
-          var $data = {
-            room: $text,
-            favorite: 1 // this variable is dependent on the color
+          var color = $(this).find('.glyphicon').css("color");
+          var fav = 0;
+
+          if (color == "rgb(194, 142, 14)") {
+            $(this).find('.glyphicon').css("color", "#000000");
+            fav = 0;
+          } else {
+            $(this).find('.glyphicon').css("color", "#c28e0e");
+            fav = 1;
           }
 
-          alert($text);
+
+          var $data = {
+            room: $text,
+            favorite: fav // this variable is dependent on the color
+          }
 
           $.ajax({
             type: "POST",
