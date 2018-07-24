@@ -58,8 +58,6 @@ router.post('/addRoom', function(req, res) {
 })
 
 router.get('/:building/:room', function(req, res) {
-    
-    // Check if building has machines'
 
     return knex.select().from('buildings')
         .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
@@ -73,76 +71,48 @@ router.get('/:building/:room', function(req, res) {
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
-                    if (machines.length > 0) {
-                        var avaliablity = "";
-                        let calendar = google.calendar('v3');
-                        calendar.events.list({
-                            auth: jwtClient,
-                            calendarId: machines[0].google_calender_id,
-                            timeMin: (new Date()).toISOString(),
-                            maxResults: 10,
-                            singleEvents: true,
-                            orderBy: 'startTime',}, 
-                            function (err, response) {
-                                if (err != undefined) {
-                                    avaliablity = 'ERROR';
-                                } else {
+                        if (machines.length > 0) {
+                            var avaliablity = "";
+                            let calendar = google.calendar('v3');
+                            calendar.events.list({
+                                auth: jwtClient,
+                                calendarId: machines[0].google_calender_id,
+                                timeMin: (new Date()).toISOString(),
+                                maxResults: 10,
+                                singleEvents: true,
+                                orderBy: 'startTime'}, 
+                                function (err, response) {
+                                    if (err) {
+                                        res.render('../views/error.ejs', error=err)
+                                    }
                                     var startTime = new Date(response.data.items[0].start.dateTime);
                                     var endTime = new Date(response.data.items[0].end.dateTime);
                                     var timeNow = new Date();
                                     if (startTime <= timeNow && timeNow <= endTime) {
-                                        avaliablity = "Class In Session"
+                                        avaliablity = "Class in session"
                                     } else {
-                                        avaliablity = "Open"
+                                        avaliablity = "open"
                                     }
-                                }
+                                    res.render('../views/room.ejs', {
+                                        machines: machines,
+                                        room: room,
+                                        building: req.params.building,
+                                        avaliablity: avaliablity
+                                    });
+                                });
+                            } else {
                                 res.render('../views/room.ejs', {
                                     machines: machines,
                                     room: room,
                                     building: req.params.building,
                                     avaliablity: avaliablity
                                 });
-                            });
-                        } else {
-                            res.render('../views/room.ejs', {
-                                machines: machines,
-                                room: room,
-                                building: req.params.building,
-                                avaliablity: avaliablity
-                            });
-                        }
-
+                            }
                     });
             } else {
                 res.render('../views/error.ejs', {error: "invalid url"})
             }
         })
-
-
-    knex.select().from('buildings')
-    .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
-    .rightOuterJoin('machines', 'rooms.id', 'machines.room_id')
-    .where('abbrev', req.params.building)
-    .andWhere('room_number', req.params.room)
-    .then(function(machines) {
-        console.log(machines);
-        console.log(room);
-        if (room != undefined) {
-            res.render('../views/room.ejs', {
-                machines: machines,
-                room: room,
-                building: req.params.building
-            });
-        } else {
-            res.render('../views/error.ejs', {error: 'invalid url'});
-        }
-
- 
-    });
-
- 
-
-
 });
 
 module.exports = router
