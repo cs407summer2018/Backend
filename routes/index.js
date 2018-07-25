@@ -32,9 +32,7 @@ return;
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   console.log(typeof req.next);
-  let parms = { title: 'Home', active: { home: true }, 
-    rows: []
-  }
+  let parms = { title: 'Home', active: { home: true }, rows: []}
   
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
@@ -42,7 +40,6 @@ router.get('/', async function(req, res, next) {
   if (req.cookies) {
     userName = req.cookies.graph_user_name;
   } 
-
 
   if (accessToken && userName) {
     parms.user = userName;
@@ -75,6 +72,28 @@ router.get('/', async function(req, res, next) {
           var occurances = filtered_row[0].occurances;
           room.occurances = occurances;
         }
+        room.availability = (room.occurances == room.capacity) ? 'Full' : 'Open';
+
+        let calendar = google.calendar('v3');
+        calendar.events.list({
+            auth: jwtClient,
+            calendarId: room.google_calender_id,
+            timeMin: (new Date()).toISOString(),
+            maxResults: 10,
+            singleEvents: true,
+            orderBy: 'startTime'}, 
+            function (err, response) {
+              if (err) {
+                room.availability = 'Error';
+              } else {
+                var startTime = new Date(response.data.items[0].start.dateTime);
+                var endTime = new Date(response.data.items[0].end.dateTime);
+                var timeNow = new Date();
+                if (startTime <= timeNow && timeNow <= endTime) {
+                    room.availability = "Class";
+                }
+              }
+            });
       })
       parms.rows = rooms
       if (userName) {
