@@ -98,6 +98,14 @@
           </tbody>
         </table>
 
+        <% if (user) { %>
+          <script>
+             $(document).ready(function() {
+              sortTable(0);
+            });
+          </script>
+        <% } %>
+
         <script>
         $(document).ready(function(){
           $("#myInput").on("keyup", function() {
