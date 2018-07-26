@@ -2,14 +2,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <% include ./partials/head %>
-</head>
-<body class="container">
 
-<header>
+  <head>
+    <% include ./partials/head %>
+    <% include ./partials/header %>
+  </head>
 
-</header>
+  <body class="container">
+
 
 <main>
     <div class="jumbotron">
@@ -58,35 +58,36 @@
         </div>
           <p id="demo"></p>
         
+
         <p>Avaliablity: <%= avaliablity %></p>
         <ul>
 
-        <table class="table table-bordered">
-          <thead>
-            <tr>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
 
-              <th scope="col">Machine</th>
-
-
-            </tr>
-          </thead>
-          <tbody>
+                <th scope="col">Machine</th>
 
 
+              </tr>
+            </thead>
+            <tbody>
 
-            <% machines.forEach((machine) => { %>
+
+
+              <% machines.forEach((machine) => { %>
               <tr>
 
                 <td><a href="/<%= building %>/<%= room.room_number %>/<%= machine.name %>"><%= machine.name %></a></td>
 
               </tr>
 
-            <% }) %>
-            </ul>
+              <% }) %>
+        </ul>
 
 
-          </tbody>
-        </table>
+</tbody>
+</table>
 
 <div>
   <div class="halfer">
@@ -110,7 +111,7 @@
 
 
 
-    </div>
+</div>
 </main>
 
 <footer>
