@@ -7,24 +7,22 @@ var path = require('path');
 
 router.post('/addBuilding', function(req, res) {
     knex('buildings').insert(req.body).then(function(result) {
-        res.json({sucess: true})
+        res.json({sucess: true});
     }).catch(function(err) {
         res.json(err);
     });
-})
+});
 
 router.get('/:building', async function(req, res, next) {
-
     let parms = { title: 'Home', active: { home: true }};
-
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
     let userName;
     if (req.cookies) {
       userName = req.cookies.graph_user_name;
-    } 
-  
-  
+    }
+
+
     if (accessToken && userName) {
       parms.user = userName;
       parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
@@ -56,7 +54,7 @@ router.get('/:building', async function(req, res, next) {
           console.log(row.room_id);
           console.log(room_id);
           return row.room_id === room_id;
-        })
+        });
         if (filtered_row.length == 0) {
           console.log(filtered_row);
           console.log(filtered_row.lenth);
@@ -65,15 +63,16 @@ router.get('/:building', async function(req, res, next) {
           var occurances = filtered_row[0].occurances;
           room.occurances = occurances;
         }
-      })
+      });
       console.log(rooms);
-      parms.rows = rooms
-  
-      res.render('../views/building.ejs', {rooms: rooms, building: req.params.building, parms: parms});
-    })
-        
+        parms.rows = rooms;
+        parms.building = req.params.building;
+        parms.rooms = rooms;
+        res.render('../views/building.ejs', parms);
+    });
+
     } else {
-        res.render('../views/error.ejs', {error: "invalid url"})
+        res.render('../views/error.ejs', {error: "invalid url"});
     }
   }).catch(function(err) {
     res.json({error: 'error3'});
@@ -82,8 +81,8 @@ router.get('/:building', async function(req, res, next) {
     knex.select().from('rooms').where('building_id', function() {
         this.select('id').from('buildings').where('abbrev', req.params.building).first();
     }).then(function(rooms) {
-       
-    });  
-})
+
+    });
+});
 
 module.exports = router;
