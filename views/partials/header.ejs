@@ -9,11 +9,22 @@
       <li><a href="/">Home</a></li>
       <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Buildings <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="/LWSN">Lawson</a></li>
-          <li><a href="/HAAS">Felix Hall</a></li>
+            <li><a href="/LWSN">Lawson</a></li>
+            <li><a href="/HAAS">Felix Hall</a></li>
         </ul>
       </li>
-      <li><a href="https://www.cs.purdue.edu/resources/facilities/labs.html">Instructional Labs</a></li>
+      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Rooms <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li><a href="/LWSN/B131">LWSN B131</a></li>
+            <li><a href="/LWSN/B146">LWSN B146</a></li>
+            <li><a href="/LWSN/B148">LWSN B148</a></li>
+            <li><a href="/LWSN/B158">LWSN B158</a></li>
+            <li><a href="/LWSN/B160">LWSN B160</a></li>  
+            <li><a href="/HAAS/G040">HAAS G040</a></li>
+            <li><a href="/HAAS/257">HAAS 257</a></li>
+            <li><a href="/HAAS/G056">HAAS G056</a></li>
+        </ul>
+      </li>
       <li><a href="/about">About</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -25,6 +36,8 @@
     </ul>
   </div>
 </nav>
+
+
 
 <% if (!user) { %>
 <div align="center" class="alert alert-warning alert-dismissable">
