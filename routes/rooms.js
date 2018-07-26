@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var config = require('../config/knex/knexfile')
-var knex = require('knex')(config)
-var path = require('path')
+var config = require('../config/knex/knexfile');
+var knex = require('knex')(config);
+var path = require('path');
 
 var {google} = require('googleapis');
 var privatekey = require("../config/privatekey.json");
@@ -27,7 +27,7 @@ return;
 
 router.post('/rooms/availability', function(req, res) {
     var avaliablity = "";
-    var google_calander_id = req.body.google_calander_id
+    var google_calander_id = req.body.google_calander_id;
     let calendar = google.calendar('v3');
     calendar.events.list({
         auth: jwtClient,
@@ -35,23 +35,23 @@ router.post('/rooms/availability', function(req, res) {
         timeMin: (new Date()).toISOString(),
         maxResults: 10,
         singleEvents: true,
-        orderBy: 'startTime',},
+        orderBy: 'startTime'},
         function (err, response) {
             var startTime = new Date(response.data.items[0].start.dateTime);
             var endTime = new Date(response.data.items[0].end.dateTime);
             var timeNow = new Date();
             if (startTime <= timeNow && timeNow <= endTime) {
-                avaliablity = "Class In Session"
+                avaliablity = "Class In Session";
             } else {
-                avaliablity = "Open"
+                avaliablity = "Open";
             }
         });
-    res.json({avaliablity: avaliablity})
+    res.json({avaliablity: avaliablity});
 });
 
 router.post('/addRoom', function(req, res) {
     knex('room').insert(req.body).then(function(result) {
-        res.json({sucess: true})
+        res.json({sucess: true});
     }).catch(function(err) {
         res.json(err);
     });
@@ -83,15 +83,15 @@ router.get('/:building/:room', function(req, res) {
                                 orderBy: 'startTime'},
                                 function (err, response) {
                                     if (err) {
-                                        res.render('../views/error.ejs', error=err)
+                                        res.render('../views/error.ejs', error=err);
                                     }
                                     var startTime = new Date(response.data.items[0].start.dateTime);
                                     var endTime = new Date(response.data.items[0].end.dateTime);
                                     var timeNow = new Date();
                                     if (startTime <= timeNow && timeNow <= endTime) {
-                                        avaliablity = "Class in session"
+                                        avaliablity = "Class in session";
                                     } else {
-                                        avaliablity = "open"
+                                        avaliablity = "open";
                                     }
                                     res.render('../views/room.ejs', {
                                         machines: machines,
@@ -114,9 +114,9 @@ router.get('/:building/:room', function(req, res) {
                             }
                     });
             } else {
-                res.render('../views/error.ejs', {error: "invalid url"})
+                res.render('../views/error.ejs', {error: "invalid url"});
             }
-        })
+        });
 });
 
-module.exports = router
+module.exports = router;
