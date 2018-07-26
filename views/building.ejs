@@ -2,36 +2,38 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <% include ./partials/head %>
-</head>
-<body class="container">
 
-<header>
-    
-</header>
+  <head>
+    <% include ./partials/head %>
+  </head>
 
-<main>
-    <div class="jumbotron">
+  <body class="container">
+
+    <header>
+      <% include ./partials/header %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
         <h1><%= building %></h1>
         <ul>
 
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              
-              <th scope="col">Rooms</th>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
 
-              
-            </tr>
+                <th scope="col">Rooms</th>
 
-            
-            <br>
-    
-            <table class="table table-bordered" id="myTable">
-              <thead>
-                <tr>
-                  <% if (parms.user) { %>
+
+              </tr>
+
+
+              <br>
+
+              <table class="table table-bordered" id="myTable">
+                <thead>
+                  <tr>
+                    <% if (parms.user) { %>
                     <th scope="col" onclick="sortTable(0)">Favorite</th>
                     <th scope="col" onclick="sortTable(1)">Building</th>
                     <th scope="col" onclick="sortTable(2)">Room</th>
@@ -40,7 +42,7 @@
                     <th scope="col" onclick="sortTable(5)">Availability</th>
                     <th scope="col" onclick="sortTable(6)">Occupants</th>
                     <th scope="col" onclick="sortTable(6)">Capacity</th>
-                  <% } else { %>
+                    <% } else { %>
                     <th scope="col" onclick="sortTable(0)">Building</th>
                     <th scope="col" onclick="sortTable(1)">Room</th>
                     <th scope="col" onclick="sortTable(2)">Machine Name</th>
@@ -48,58 +50,58 @@
                     <th scope="col" onclick="sortTable(4)">Availability</th>
                     <th scope="col" onclick="sortTable(6)">Occupants</th>
                     <th scope="col" onclick="sortTable(6)">Capacity</th>
-                  <% } %>
-                  
-                  
-                </tr>
-              </thead>
-              <tbody id="myTable2">
-    
-                <% rooms.forEach((row) => { %>
-    
-                    <tr>
-                      <% if (parms.user) { %>
-                        <td class='favorite'>fave</td>
-                        <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
-                        <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
-                        <td><%= row.machine_name %></td>
-                        <td><%= row.OS %></td>
-                        <td class='availability'><%= row.availability %></td>
-                        <td><%= row.occurances %></td>
-                        <td><%= row.capacity %></td>
-                      <% } else { %>
-                        <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
-                        <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
-                        <td><%= row.machine_name %></td>
-                        <td><%= row.OS %></td>
-                        <td class='availability'><%= row.availability %></td>
-                        <td><%= row.occurances %></td>
-                        <td><%= row.capacity %></td>
-                      <% } %>
-                       
-                    </tr>
-    
-                <% }) %>
-    
-              </tbody>
-            </table>
+                    <% } %>
+
+
+                  </tr>
+                </thead>
+                <tbody id="myTable2">
+
+                  <% rooms.forEach((row) => { %>
+
+                  <tr>
+                    <% if (parms.user) { %>
+                    <td class='favorite'>fave</td>
+                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
+                    <td><%= row.machine_name %></td>
+                    <td><%= row.OS %></td>
+                    <td class='availability'><%= row.availability %></td>
+                    <td><%= row.occurances %></td>
+                    <td><%= row.capacity %></td>
+                    <% } else { %>
+                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
+                    <td><%= row.machine_name %></td>
+                    <td><%= row.OS %></td>
+                    <td class='availability'><%= row.availability %></td>
+                    <td><%= row.occurances %></td>
+                    <td><%= row.capacity %></td>
+                    <% } %>
+
+                  </tr>
+
+                  <% }) %>
+
+                </tbody>
+              </table>
 
 
 
 
-          </thead>
-          <tbody>
-          
-            
-            
-            </ul>
-
-          
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
 
 
-    </div>
+
+        </ul>
+
+
+</tbody>
+</table>
+
+
+</div>
 </main>
 
 <footer>
@@ -108,4 +110,3 @@
 
 </body>
 </html>
-

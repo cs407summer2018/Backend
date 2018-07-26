@@ -35,7 +35,7 @@ router.post('/rooms/availability', function(req, res) {
         timeMin: (new Date()).toISOString(),
         maxResults: 10,
         singleEvents: true,
-        orderBy: 'startTime',}, 
+        orderBy: 'startTime',},
         function (err, response) {
             var startTime = new Date(response.data.items[0].start.dateTime);
             var endTime = new Date(response.data.items[0].end.dateTime);
@@ -80,7 +80,7 @@ router.get('/:building/:room', function(req, res) {
                                 timeMin: (new Date()).toISOString(),
                                 maxResults: 10,
                                 singleEvents: true,
-                                orderBy: 'startTime'}, 
+                                orderBy: 'startTime'},
                                 function (err, response) {
                                     if (err) {
                                         res.render('../views/error.ejs', error=err)
@@ -97,7 +97,9 @@ router.get('/:building/:room', function(req, res) {
                                         machines: machines,
                                         room: room,
                                         building: req.params.building,
-                                        avaliablity: avaliablity
+                                        avaliablity: avaliablity,
+                                        user: null,
+                                        signInUrl: null
                                     });
                                 });
                             } else {
@@ -105,7 +107,9 @@ router.get('/:building/:room', function(req, res) {
                                     machines: machines,
                                     room: room,
                                     building: req.params.building,
-                                    avaliablity: avaliablity
+                                    avaliablity: avaliablity,
+                                    user: null,
+                                    signInUrl: null
                                 });
                             }
                     });

@@ -22,9 +22,9 @@ router.get('/:building', async function(req, res, next) {
     let userName;
     if (req.cookies) {
       userName = req.cookies.graph_user_name;
-    } 
-  
-  
+    }
+
+
     if (accessToken && userName) {
       parms.user = userName;
       parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
@@ -68,10 +68,10 @@ router.get('/:building', async function(req, res, next) {
       })
       console.log(rooms);
       parms.rows = rooms
-  
-      res.render('../views/building.ejs', {rooms: rooms, building: req.params.building, parms: parms});
+
+        res.render('../views/building.ejs', {rooms: rooms, building: req.params.building, parms: parms, user: null, signInUrl: null});
     })
-        
+
     } else {
         res.render('../views/error.ejs', {error: "invalid url"})
     }
@@ -82,8 +82,8 @@ router.get('/:building', async function(req, res, next) {
     knex.select().from('rooms').where('building_id', function() {
         this.select('id').from('buildings').where('abbrev', req.params.building).first();
     }).then(function(rooms) {
-       
-    });  
+
+    });
 })
 
 module.exports = router;

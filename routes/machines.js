@@ -21,7 +21,7 @@ router.post('/addMachine', function(req, res) {
     }
 
     console.log(machines);
-    
+
     knex('machines').insert(machines).then(function(result) {
         res.json({sucess: true})
     }).catch(function(err) {
@@ -30,7 +30,7 @@ router.post('/addMachine', function(req, res) {
 })
 
 router.get('/:building/:room/:machine', function(req, res) {
-    
+
     return knex.select().from('machines')
         .rightOuterJoin('rooms', 'machines.room_id', 'rooms.id')
         .rightOuterJoin('specifications', 'rooms.id', 'specifications.room_id')
@@ -39,23 +39,25 @@ router.get('/:building/:room/:machine', function(req, res) {
         .andWhere('building_id', function() {
             this.select('id').from('buildings').where('abbrev', req.params.building);
         }).first()
-        .then(function(machine) {     
+        .then(function(machine) {
+            let parms = {machine: machine, building: req.params.building, user: null, signInUrl: null };
             if (machine != undefined) {
                 knex.select().from('usages').whereNull('end_time').andWhere('machine_id', function() {
                     this.select('id').from('machines').where('machines.name', machine.name);
                 }).first()
                 .then(function(session){
                     if (session == undefined) {
-                        res.render('../views/machine.ejs', {machine: machine, building: req.params.building, session: "not in use"});
+                        parms.session = "not in use";
                     } else {
-                        res.render('../views/machine.ejs', {machine: machine, building: req.params.building, session: "in use"});
+                        parms.session = "in use";
                     }
+                    res.render('../views/machine.ejs', parms);
                 })
             } else {
                 res.render('../views/error.ejs', {error: "invalid url"})
             }
         })
-      
+
 });
 
 module.exports = router
