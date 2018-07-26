@@ -32,22 +32,7 @@ return;
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   console.log(typeof req.next);
-  let parms = { title: 'Home', active: { home: true }, 
-    rows: [
-    {
-      building: 'LWSN', room: 'B131', machineName: 'sac', OS: 'Linux', Availability: 'Open', Fraction: '3/26'
-    },
-    {
-      building: 'LWSN', room: 'B146', machineName: 'moore', OS: 'Linux', Availability: 'Open', Fraction: '1/25'
-    },
-    {
-      building: 'HAAS', room: 'G040', machineName: 'pod', OS: 'Linux', Availability: 'Full', Fraction: '26/26'
-    },
-    {
-      building: 'LWSN', room: 'G056', machineName: 'sslab', OS: 'Linux', Availability: 'Open', Fraction: '10/26'
-    }
-    ]
-  }
+  let parms = { title: 'Home', active: { home: true }, rows: []}
   
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
@@ -55,7 +40,6 @@ router.get('/', async function(req, res, next) {
   if (req.cookies) {
     userName = req.cookies.graph_user_name;
   } 
-
 
   if (accessToken && userName) {
     parms.user = userName;
@@ -79,26 +63,62 @@ router.get('/', async function(req, res, next) {
     order by room_id;').then(function(results) {
       rooms.forEach(function(room) {
         var room_id = room.id;
-        var asd = results[0];
-        console.log(asd);
-        var filtered_row = asd.filter(function(row){
-          console.log(row.room_id);
-          console.log(room_id);
+        var filtered_row = results[0].filter(function(row){
           return row.room_id === room_id;
         })
         if (filtered_row.length == 0) {
-          console.log(filtered_row);
-          console.log(filtered_row.lenth);
           room.occurances = 0;
         } else {
           var occurances = filtered_row[0].occurances;
           room.occurances = occurances;
         }
+        room.availability = (room.occurances == room.capacity) ? 'Full' : 'Open';
+
+        let calendar = google.calendar('v3');
+        calendar.events.list({
+            auth: jwtClient,
+            calendarId: room.google_calender_id,
+            timeMin: (new Date()).toISOString(),
+            maxResults: 10,
+            singleEvents: true,
+            orderBy: 'startTime'}, 
+            function (err, response) {
+              if (err) {
+                room.availability = 'Error';
+              } else {
+                var startTime = new Date(response.data.items[0].start.dateTime);
+                var endTime = new Date(response.data.items[0].end.dateTime);
+                var timeNow = new Date();
+                if (startTime <= timeNow && timeNow <= endTime) {
+                    room.availability = "Class";
+                }
+              }
+            });
       })
-      console.log(rooms);
       parms.rows = rooms
-  
-      res.render('index.ejs', parms);
+      if (userName) {
+        knex.select().from('favorites').where('user_id', function() {
+          this.select('id').from('users').where('name', userName)
+        })
+        .then(function(favorites) {
+          rooms.forEach(function(room) {
+            var room_id = room.id;
+            var filtered_row = favorites.filter(function(favorite){
+              return favorite.room_id === room_id;
+            })
+            if (filtered_row.length == 0) {
+              room.favorited = 0;
+            } else {
+              room.favorited = 1;
+            }
+          })
+
+          console.log(rooms);
+          res.render('index.ejs', parms);
+        })
+      } else {
+        res.render('index.ejs', parms);
+      }
     })
 
   }).catch(function(err) {
@@ -141,22 +161,4 @@ var recurse = function (rooms, idx, req, res, parms) {
   }
 }
 
-
-/**
- * 
- * 
-
-rooms.forEach(function(room) {
-  knex.select('name').from('machines').where('room_id', room.id).first()
-  .then(function(result) {
-    if (result != undefined) {
-      room.machineName = result.name;
-    }
-    knex.select('OS').from('specifications').where('room_id', room.id).first()
-    .then(function(result) {
-      room.OS = result.OS;
-    })
-  })
-})
-*/
 module.exports = router;

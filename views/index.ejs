@@ -14,12 +14,10 @@
     </header>
     <main>
       <div class="jumbotron">
-          <div align="center">
-              <h1>Purdue Lab Stats</h1>
-              <p>Welcome</p>
-              <% console.log(debug); %>
-      
-              <p>Type something in the input field to search the table</p>  
+        <div align="center">
+            <img src="purduecs.gif">  
+            <h1>PURDUE LAB STATS</h1>  
+              <p style="font-size:125%;">All instructional lab information can be viewed below. Select a row to view more details and a full list of machines. </p>  
             </div>
        
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
@@ -35,32 +33,45 @@
                 <th scope="col" onclick="sortTable(3)">Machine Name</th>
                 <th scope="col" onclick="sortTable(4)">OS</th>
                 <th scope="col" onclick="sortTable(5)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Occupants</th>
-                <th scope="col" onclick="sortTable(6)">Capacity</th>
+                <th scope="col" onclick="sortTable(6)">Machines in Use</th>
+                <th scope="col" onclick="sortTable(7)">Capacity</th>
+                <th scope="col" onclick="sortTable(8)">% of Machines in Use</th>
               <% } else { %>
                 <th scope="col" onclick="sortTable(0)">Building</th>
                 <th scope="col" onclick="sortTable(1)">Room</th>
                 <th scope="col" onclick="sortTable(2)">Machine Name</th>
                 <th scope="col" onclick="sortTable(3)">OS</th>
                 <th scope="col" onclick="sortTable(4)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Occupants</th>
+                <th scope="col" onclick="sortTable(5)">Machines in Use</th>
                 <th scope="col" onclick="sortTable(6)">Capacity</th>
+                <th scope="col" onclick="sortTable(7)">% of Machines in Use</th>
               <% } %>
               
               
             </tr>
           </thead>
           <tbody id="myTable2">
-
-            
-
             <% rows.forEach((row, idx) => { %>
 
-                <tr>
+                <tr class='clickable-row' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
                   <% if (user) { %>
-                    
-                    <td class='favorite'><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span></td>
-                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+
+                    <% if (row.favorited == 1) { %>
+                      <td class='favorite' style="color:#c28e0e">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="color:#c28e0e">
+                          </span>
+                        </div>
+                      </td>
+                    <% } else { %>
+                      <td class='favorite' style="color:black">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="visibility:none" style="color:black">
+                          </span>
+                        </div>
+                      </td>
+                    <% } %>
+                      <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
@@ -75,6 +86,7 @@
                     <td id="availability<%= idx %>"><%= row.availability %></td>
                     <td><%= row.occurances %></td>
                     <td><%= row.capacity %></td>
+                    <td></td>
                   <% } %>
                    
                 </tr>
@@ -83,6 +95,7 @@
 
           </tbody>
         </table>
+
 
 
         <div class="container-box">
@@ -131,7 +144,22 @@
         
         
 
+        <% if (user) { %>
+          <script>
+             $(document).ready(function() {
+              sortTable(0);
+            });
+          </script>
+        <% } %>
+
+
         <script>
+        jQuery(document).ready(function($) {
+          $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+          });
+        });
+
         $(document).ready(function(){
           $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
@@ -150,21 +178,27 @@
           }
         });
 
-     
-       
-       
-
         $(".favorite").click(function() {
           
           var $row = $(this).closest("tr");    // Find the row
           var $text = $row.find(".room").text(); // Find the text
         
-          var $data = {
-            room: $text,
-            favorite: 1 // this variable is dependent on the color
+          var color = $(this).find('.glyphicon').css("color");
+          var fav = 0;
+
+          if (color == "rgb(194, 142, 14)") {
+            $(this).find('.glyphicon').css("color", "#000000");
+            fav = 0;
+          } else {
+            $(this).find('.glyphicon').css("color", "#c28e0e");
+            fav = 1;
           }
 
-          alert($text);
+
+          var $data = {
+            room: $text,
+            favorite: fav // this variable is dependent on the color
+          }
 
           $.ajax({
             type: "POST",
