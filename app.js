@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const app = express();
 var session = require('express-session');
 var nodeMailer = require('nodemailer');
+var fs = require('fs');
+var busboy = require('connect-busboy');
 
 require('dotenv').config();
 
@@ -21,6 +23,7 @@ var authorize = require('./routes/authorize');
 app.engine('html', require('ejs').renderFile);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(busboy());
 
 app.use(cookieParser());
 app.use(session({
@@ -39,6 +42,22 @@ app.use('/', rooms);
 app.use('/', machines);
 app.use('/', sessions);
 app.use('/', buildings);
+
+app.post('/windows-status', function(req, res) {
+    var fstream;
+    req.pipe(req.busboy);
+    req.busboy.on('file', function (fieldname, file, filename) {
+        console.log("Uploading: " + filename);
+        fstream = fs.createWriteStream(__dirname + '/files/' + filename);
+        file.pipe(fstream);
+        fstream.on('close', function () {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write('<!doctype html><html><head><title>response</title></head><body>');
+            res.write('<h1>Data received!</h1>');
+            res.end('</body></html>');
+        });
+    });
+});
 
 app.post('/send-email', function (req, res) {
   let transporter = nodeMailer.createTransport({
