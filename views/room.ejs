@@ -65,7 +65,7 @@
 
             <div id="lab-specs-div" class="content" align="left" style="padding-left: 20%;">
               <p style="font-size: 125%;">
-                <b>Capacity</b>: <%= machines[0] %>
+                <b>Capacity</b>: <%= machines[0].capacity %>
                 <br><b>CPU</b>: <%= machines[0].CPU %>
                 <br> <b>RAM</b>: <%= machines[0].RAM%>
                 <br> <b>Monitor</b>: <%= machines[0].monitor%>
@@ -122,10 +122,9 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-
-                <th scope="col">Machine</th>
-
-
+                  <th scope="col" onclick="sortTable(0)">Machine Name</th>
+                  <th scope="col" onclick="sortTable(1)">Email Machine User</th>
+                  <th scope="col" onclick="sortTable(2)">In Use</th>
               </tr>
             </thead>
             <tbody>
@@ -133,7 +132,7 @@
               <% machines.forEach((machine) => { %>
               <tr>
 
-                <td><a href="/<%= building %>/<%= room.room_number %>/<%= machine.name %>"><%= machine.name %></a></td>
+                <td><%= machine.name %></td>
 
               </tr>
 
