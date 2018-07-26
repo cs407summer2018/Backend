@@ -13,12 +13,72 @@
 
 <main>
     <div class="jumbotron">
-        <h1><%= building + " " + room.room_number %>
-          
-        
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModalRoom">Email to everyone in this lab room</button>
-       
-        </h1>
+        <div align="center">
+            <img class="headImg" src="/<%= building %>-ext.png"></img>
+            <h1><%= building + " " + room.room_number %></h1>
+            <p>Availability: <%= availability %></p>
+           <div style="display: inline-block">
+              <button id="email-lab" data-placement="top" title="Email Lab Users" type="button" class="btn" data-toggle="modal" data-target="#myModalRoom">
+                  <span class="glyphicon glyphicon-envelope" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-schedule" data-placement="top" title="View Lab Schedule" type="button" class="btn">
+                  <span class="glyphicon glyphicon-calendar" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-footage" data-placement="top" title="View Lab Footage" type="button" class="btn">
+                  <span class="glyphicon glyphicon-facetime-video" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-busy-times" data-placement="top" title="View Busy Times" type="button" class="btn">
+                  <span class="glyphicon glyphicon-stats" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-heat-map" data-placement="top" title="View Heat Map" type="button" class="btn">
+                  <span class="glyphicon glyphicon-fire" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-specs" data-placement="top" title="View Lab Specs" type="button" class="btn">
+                  <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em;"></span>
+              </button>
+            </div>
+
+            <br></br>
+
+            <div id="lab-schedule-div" class="content">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=<%= room.google_calender_id %>&amp;color=%23182C57&amp;ctz=America%2FNew_York"
+                style="border-width:0"
+                frameborder="0"
+                width="600" height="450"
+                scrolling="no">
+              </iframe>
+            </div>
+
+            <div id="lab-footage-div" class="content">
+              <img src="https://www.cs.purdue.edu/cams-delayed/<%= building + room.room_number %>.jpg">
+              </img>
+            </div>
+
+            <div id="lab-busy-times-div" class="content">
+
+            </div>
+            
+            <div id="lab-heat-map-div" class="content">
+
+            </div>
+
+            <div id="lab-specs-div" class="content" align="left" style="padding-left: 20%;">
+              <p style="font-size: 125%;">
+                <b>Capacity</b>: <%= machines[0] %>
+                <br><b>CPU</b>: <%= machines[0].CPU %>
+                <br> <b>RAM</b>: <%= machines[0].RAM%>
+                <br> <b>Monitor</b>: <%= machines[0].monitor%>
+                <br> <b>OS</b>: <%= machines[0].OS%>
+                <br> <b>Printer</b>: <%= machines[0].printer%>
+                <br> <b>Printer id</b>: <%= machines[0].printer_id%>
+
+              </p>
+            </div>
+
+            <br>
+
+        </div>  
           <div id="myModalRoom" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <!-- Modal content-->
@@ -46,7 +106,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="body"> Message:</label>
-                                <textarea class="form-control" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="6000" rows="7"></textarea>
+                                <textarea class="form-control" style="resize: none" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="256" rows="7"></textarea>
                             </div>
                             <button type="submit" class="btn btn-lg btn-success btn-block" id="btnContactUs">Post It! &rarr;</button>
                         </form>
@@ -56,10 +116,7 @@
                 </div>
             </div>
         </div>
-          <p id="demo"></p>
-        
-
-        <p>Avaliablity: <%= avaliablity %></p>
+      
         <ul>
 
           <table class="table table-bordered">
@@ -73,8 +130,6 @@
             </thead>
             <tbody>
 
-
-
               <% machines.forEach((machine) => { %>
               <tr>
 
@@ -85,32 +140,9 @@
               <% }) %>
         </ul>
 
-
+  </div>
 </tbody>
 </table>
-
-<div>
-  <div class="halfer">
-    <div class="responsiveCal">
-      <iframe
-        src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=<%= room.google_calender_id %>&amp;color=%23182C57&amp;ctz=America%2FNew_York"
-        style="border-width:0"
-        frameborder="0"
-        width="600" height="450"
-        scrolling="no"></iframe>
-    </div>
-  </div>
-  <div class="halfer">
-    <div class="responsiveParent">
-      <img
-        src="https://www.cs.purdue.edu/cams-delayed/<%= building + room.room_number %>.jpg"
-        class="responsiveImg"></img>
-    </div>
-  </div>
-</div>
-
-
-
 </div>
 </main>
 
@@ -119,9 +151,26 @@
 </footer>
 
 <script>
-function myFunction() {
-  document.getElementById("demo").innerHTML = "Email button clicked";
-}
+  $(document).ready(function(){
+      $('[class="btn"]').tooltip({ trigger: "hover" });   
+  });
+
+  $(function() {
+    $(".btn").on("click",function(e) {
+      if (this.id == "email-lab") {
+        return;
+      }
+      if ($("#"+this.id+"-div").is(":visible")) {
+        e.preventDefault();
+        $(".content").hide();
+        $("#"+this.id+"-div").hide();
+        return;
+      }
+      e.preventDefault();
+      $(".content").hide();
+      $("#"+this.id+"-div").show();
+    });
+  });
 </script>
 
 </body>
