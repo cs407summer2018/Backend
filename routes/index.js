@@ -27,6 +27,28 @@ jwtClient.authorize(function (err, tokens) {
     }
 });
 
+router.get('/about', async function(req, res, next) {
+  let parms = { title: 'Home', active: { home: true }, rows: []}
+  const accessToken = await authHelper.getAccessToken(req.cookies, res);
+
+  let userName;
+  if (req.cookies) {
+    userName = req.cookies.graph_user_name;
+  } 
+
+  if (accessToken && userName) {
+    parms.user = userName;
+    parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+    parms.signInUrl = null;
+  } else {
+    parms.signInUrl = authHelper.getAuthUrl();
+    parms.debug = parms.signInUrl;
+    parms.user = null;
+  }
+
+  res.render('../views/about.ejs', parms);
+})
+
 /* GET home page. */
 router.get('/', async function(req, res, next) {
     let parms = { title: 'Home', active: { home: true }, rows: []};

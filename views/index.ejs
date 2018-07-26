@@ -14,6 +14,7 @@
     </header>
 
     <main>
+           
       <div class="jumbotron">
         <div align="center">
             <img src="purduecs.gif">
@@ -87,6 +88,8 @@
                     <td id="availability<%= idx %>"><%= row.availability %></td>
                     <td><%= row.occurances %></td>
                     <td><%= row.capacity %></td>
+                    <td><a href='#/' id='trig1'>HOVER</a>
+                      <iframe id='ifrm1' name='ifrm1' src='https://days.to/until/christmas'></iframe></td>
                     <td></td>
                   <% } %>
 
@@ -110,6 +113,12 @@
           $(".clickable-row").click(function() {
             window.location = $(this).data("href");
           });
+        });
+
+        $(document).ready(function(){
+          $('button').click(function(){
+            $('.alert').show()
+          }) 
         });
 
         $(document).ready(function(){
