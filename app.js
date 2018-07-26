@@ -45,7 +45,7 @@ app.post('/send-email', function (req, res) {
       service: 'gmail',
       auth: {
           user: 'hihms95@gmail.com',
-          pass: '<password>'
+          pass: 'anstjs95!'
       }
   });
   let mailOptions = {
@@ -62,8 +62,11 @@ app.post('/send-email', function (req, res) {
       }
       console.log('Message %s sent: %s', info.messageId, info.response);
           //res.render('index.ejs');
+          //res.render('index.ejs', parms);
       });
   });
+
+
 
 
 var port = 3000;
