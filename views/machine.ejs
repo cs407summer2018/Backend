@@ -2,54 +2,56 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <% include ./partials/head %>
-</head>
-<body class="container">
 
-<header>
-    
-</header>
+  <head>
+    <% include ./partials/head %>
+  </head>
 
-<main>
-    <div class="jumbotron">
+  <body class="container">
+
+    <header>
+      <% include ./partials/header %>
+    </header>
+
+    <main>
+      <div class="jumbotron">
         <h1><%= building + " " + machine.room_number + " " + machine.name %></h1>
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">Machine</th>
-            <th scope="col">CPU</th>
-            <th scope="col">RAM</th>
-            <th scope="col">OS</th>
-            <th scope="col">Monitor</th>
-            <th scope="col">Printer</th>
-            <th scope="col">Usage</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row"><%= machine.name %></th>
-            <td><%= machine.CPU %></td>
-            <td><%= machine.RAM %></td>
-            <td><%= machine.OS %></td>
-            <td><%= machine.monitor %></td>
-            <td><%= machine.printer_id %></td>
-            <td><%= session %></td>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Machine</th>
+              <th scope="col">CPU</th>
+              <th scope="col">RAM</th>
+              <th scope="col">OS</th>
+              <th scope="col">Monitor</th>
+              <th scope="col">Printer</th>
+              <th scope="col">Usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><%= machine.name %></th>
+              <td><%= machine.CPU %></td>
+              <td><%= machine.RAM %></td>
+              <td><%= machine.OS %></td>
+              <td><%= machine.monitor %></td>
+              <td><%= machine.printer_id %></td>
+              <td><%= session %></td>
 
-          </tr>
+            </tr>
 
-          
-        </tbody>
-      </table>
 
-    </div>
+          </tbody>
+        </table>
 
-</main>
+      </div>
 
-<footer>
-  <% include ./partials/footer %>
-</footer>
+    </main>
 
-</body>
+    <footer>
+      <% include ./partials/footer %>
+    </footer>
+
+  </body>
 </html>

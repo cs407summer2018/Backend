@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var config = require('../config/knex/knexfile')
-var knex = require('knex')(config)
-var path = require('path')
+var authHelper = require('../helpers/auth');
+var config = require('../config/knex/knexfile');
+var knex = require('knex')(config);
+var path = require('path');
 
 var {google} = require('googleapis');
 var privatekey = require("../config/privatekey.json");
@@ -17,17 +18,17 @@ let jwtClient = new google.auth.JWT(
      'https://www.googleapis.com/auth/calendar']);
 
 jwtClient.authorize(function (err, tokens) {
-if (err) {
-    console.log(err);
-return;
-} else {
-    console.log("Successfully connected!");
-}
+    if (err) {
+        console.log(err);
+        return;
+    } else {
+        console.log("Successfully connected!");
+    }
 });
 
 router.post('/rooms/availability', function(req, res) {
     var avaliablity = "";
-    var google_calander_id = req.body.google_calander_id
+    var google_calander_id = req.body.google_calander_id;
     let calendar = google.calendar('v3');
     calendar.events.list({
         auth: jwtClient,
@@ -35,29 +36,46 @@ router.post('/rooms/availability', function(req, res) {
         timeMin: (new Date()).toISOString(),
         maxResults: 10,
         singleEvents: true,
-        orderBy: 'startTime',}, 
-        function (err, response) {
-            var startTime = new Date(response.data.items[0].start.dateTime);
-            var endTime = new Date(response.data.items[0].end.dateTime);
-            var timeNow = new Date();
-            if (startTime <= timeNow && timeNow <= endTime) {
-                avaliablity = "Class In Session"
-            } else {
-                avaliablity = "Open"
-            }
-        });
-    res.json({avaliablity: avaliablity})
+        orderBy: 'startTime'},
+                         function (err, response) {
+                             var startTime = new Date(response.data.items[0].start.dateTime);
+                             var endTime = new Date(response.data.items[0].end.dateTime);
+                             var timeNow = new Date();
+                             if (startTime <= timeNow && timeNow <= endTime) {
+                                 avaliablity = "Class In Session";
+                             } else {
+                                 avaliablity = "Open";
+                             }
+                         });
+    res.json({avaliablity: avaliablity});
 });
 
 router.post('/addRoom', function(req, res) {
     knex('room').insert(req.body).then(function(result) {
-        res.json({sucess: true})
+        res.json({sucess: true});
     }).catch(function(err) {
         res.json(err);
     });
 })
 
-router.get('/:building/:room', function(req, res) {
+router.get('/:building/:room', async function(req, res) {
+    let parms = { title: 'Home', active: { home: true }, rows: []};
+    const accessToken = await authHelper.getAccessToken(req.cookies, res);
+
+    let userName;
+    if (req.cookies) {
+        userName = req.cookies.graph_user_name;
+    }
+
+    if (accessToken && userName) {
+        parms.user = userName;
+        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+        parms.signInUrl = null;
+    } else {
+        parms.signInUrl = authHelper.getAuthUrl();
+        parms.debug = parms.signInUrl;
+        parms.user = null;
+    }
 
     return knex.select().from('buildings')
         .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
@@ -74,45 +92,46 @@ router.get('/:building/:room', function(req, res) {
                         if (machines.length > 0) {
                             var avaliablity = "";
                             let calendar = google.calendar('v3');
-                            calendar.events.list({
+                            let calendar_options = {
                                 auth: jwtClient,
                                 calendarId: machines[0].google_calender_id,
                                 timeMin: (new Date()).toISOString(),
                                 maxResults: 10,
                                 singleEvents: true,
-                                orderBy: 'startTime'}, 
+                                orderBy: 'startTime'};
+                            calendar.events.list(
+                                calendar_options,
                                 function (err, response) {
                                     if (err) {
-                                        res.render('../views/error.ejs', error=err)
+                                        res.render('../views/error.ejs',
+                                                   error=err);
                                     }
                                     var startTime = new Date(response.data.items[0].start.dateTime);
                                     var endTime = new Date(response.data.items[0].end.dateTime);
                                     var timeNow = new Date();
                                     if (startTime <= timeNow && timeNow <= endTime) {
-                                        avaliablity = "Class in session"
+                                        avaliablity = "Class in session";
                                     } else {
-                                        avaliablity = "open"
+                                        avaliablity = "open";
                                     }
-                                    res.render('../views/room.ejs', {
-                                        machines: machines,
-                                        room: room,
-                                        building: req.params.building,
-                                        avaliablity: avaliablity
-                                    });
+                                    parms.machines = machines;
+                                    parms.room = room;
+                                    parms.building = req.params.building;
+                                    parms.avaliablity = avaliablity;
+                                    res.render('../views/room.ejs', parms);
                                 });
-                            } else {
-                                res.render('../views/room.ejs', {
-                                    machines: machines,
-                                    room: room,
-                                    building: req.params.building,
-                                    avaliablity: avaliablity
-                                });
-                            }
+                        } else {
+                            parms.machines = machines;
+                            parms.room = room;
+                            parms.building = req.params.building;
+                            parms.avaliablity = avaliablity;
+                            res.render('../views/room.ejs', parms);
+                        }
                     });
             } else {
-                res.render('../views/error.ejs', {error: "invalid url"})
+                res.render('../views/error.ejs', {error: "invalid url"});
             }
-        })
+        });
 });
 
-module.exports = router
+module.exports = router;
