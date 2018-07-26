@@ -33,7 +33,7 @@
               <table class="table table-bordered" id="myTable">
                 <thead>
                   <tr>
-                    <% if (parms.user) { %>
+                    <% if (user) { %>
                     <th scope="col" onclick="sortTable(0)">Favorite</th>
                     <th scope="col" onclick="sortTable(1)">Building</th>
                     <th scope="col" onclick="sortTable(2)">Room</th>
@@ -60,7 +60,7 @@
                   <% rooms.forEach((row) => { %>
 
                   <tr>
-                    <% if (parms.user) { %>
+                    <% if (user) { %>
                     <td class='favorite'>fave</td>
                     <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
