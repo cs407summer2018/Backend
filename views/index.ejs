@@ -14,12 +14,10 @@
     </header>
     <main>
       <div class="jumbotron">
-          <div align="center">
-              <h1>Purdue Lab Stats</h1>
-              <p>Welcome</p>
-              <% console.log(debug); %>
-      
-              <p>Type something in the input field to search the table</p>  
+        <div align="center">
+            <img src="purduecs.gif">  
+            <h1>PURDUE LAB STATS</h1>  
+              <p style="font-size:125%;">All instructional lab information can be viewed below. Select a row to view more details and a full list of machines. </p>  
             </div>
        
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
@@ -35,28 +33,27 @@
                 <th scope="col" onclick="sortTable(3)">Machine Name</th>
                 <th scope="col" onclick="sortTable(4)">OS</th>
                 <th scope="col" onclick="sortTable(5)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Occupants</th>
-                <th scope="col" onclick="sortTable(6)">Capacity</th>
+                <th scope="col" onclick="sortTable(6)">Machines in Use</th>
+                <th scope="col" onclick="sortTable(7)">Capacity</th>
+                <th scope="col" onclick="sortTable(8)">% of Machines in Use</th>
               <% } else { %>
                 <th scope="col" onclick="sortTable(0)">Building</th>
                 <th scope="col" onclick="sortTable(1)">Room</th>
                 <th scope="col" onclick="sortTable(2)">Machine Name</th>
                 <th scope="col" onclick="sortTable(3)">OS</th>
                 <th scope="col" onclick="sortTable(4)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Occupants</th>
+                <th scope="col" onclick="sortTable(5)">Machines in Use</th>
                 <th scope="col" onclick="sortTable(6)">Capacity</th>
+                <th scope="col" onclick="sortTable(7)">% of Machines in Use</th>
               <% } %>
               
               
             </tr>
           </thead>
           <tbody id="myTable2">
-
-            
-
             <% rows.forEach((row, idx) => { %>
 
-                <tr>
+                <tr class='clickable-row' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
                   <% if (user) { %>
 
                     <% if (row.favorited == 1) { %>
@@ -89,6 +86,7 @@
                     <td id="availability<%= idx %>"><%= row.availability %></td>
                     <td><%= row.occurances %></td>
                     <td><%= row.capacity %></td>
+                    <td></td>
                   <% } %>
                    
                 </tr>
@@ -107,6 +105,12 @@
         <% } %>
 
         <script>
+        jQuery(document).ready(function($) {
+          $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+          });
+        });
+
         $(document).ready(function(){
           $("#myInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
