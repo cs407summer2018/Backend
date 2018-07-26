@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var config = require('../config/knex/knexfile')
-var knex = require('knex')(config)
-var path = require('path')
+var authHelper = require('../helpers/auth');
+var config = require('../config/knex/knexfile');
+var knex = require('knex')(config);
+var path = require('path');
 
 router.post('/addMachine', function(req, res) {
     var numOfMachines = req.body.numOfMachines;
@@ -16,20 +17,37 @@ router.post('/addMachine', function(req, res) {
         var machine = {
             'room_id': room_id,
             'name': name
-        }
+        };
         machines.push(machine);
     }
 
     console.log(machines);
 
     knex('machines').insert(machines).then(function(result) {
-        res.json({sucess: true})
+        res.json({sucess: true});
     }).catch(function(err) {
         res.json(err);
     });
 })
 
-router.get('/:building/:room/:machine', function(req, res) {
+router.get('/:building/:room/:machine', async function(req, res) {
+    let parms = { title: 'Home', active: { home: true }, rows: []};
+    const accessToken = await authHelper.getAccessToken(req.cookies, res);
+
+    let userName;
+    if (req.cookies) {
+        userName = req.cookies.graph_user_name;
+    }
+
+    if (accessToken && userName) {
+        parms.user = userName;
+        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+        parms.signInUrl = null;
+    } else {
+        parms.signInUrl = authHelper.getAuthUrl();
+        parms.debug = parms.signInUrl;
+        parms.user = null;
+    }
 
     return knex.select().from('machines')
         .rightOuterJoin('rooms', 'machines.room_id', 'rooms.id')
@@ -40,7 +58,8 @@ router.get('/:building/:room/:machine', function(req, res) {
             this.select('id').from('buildings').where('abbrev', req.params.building);
         }).first()
         .then(function(machine) {
-            let parms = {machine: machine, building: req.params.building, user: null, signInUrl: null };
+            parms.machine = machine;
+            parms.building = req.params.building;
             if (machine != undefined) {
                 knex.select().from('usages').whereNull('end_time').andWhere('machine_id', function() {
                     this.select('id').from('machines').where('machines.name', machine.name);
@@ -52,12 +71,12 @@ router.get('/:building/:room/:machine', function(req, res) {
                         parms.session = "in use";
                     }
                     res.render('../views/machine.ejs', parms);
-                })
+                });
             } else {
-                res.render('../views/error.ejs', {error: "invalid url"})
+                res.render('../views/error.ejs', {error: "invalid URL"});
             }
-        })
+        });
 
 });
 
-module.exports = router
+module.exports = router;
