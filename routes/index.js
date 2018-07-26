@@ -54,6 +54,7 @@ router.get('/', async function(req, res, next) {
     (select distinct machine_id as id from usages \
      where end_time is null and \
      machine_id in (select id from machines where room_id in (select id from rooms)) \
+     and device LIKE \'%tty%\'\
      order by machine_id) \
     group by room_id \
     order by room_id;').then(function(results) {
