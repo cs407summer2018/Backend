@@ -7,51 +7,96 @@
     <% include ./partials/head %>
   </head>
 
-  <body class="container">
 
-    <header>
-      <% include ./partials/header %>
-    </header>
+<main>
+    <div class="jumbotron">
+        <h1><%= building + " " + machine.room_number + " " + machine.name %>
+   
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModalMachine">Email to person using this specific lab machine</button>
+        </h1>   
 
-    <main>
-      <div class="jumbotron">
-        <h1><%= building + " " + machine.room_number + " " + machine.name %></h1>
+          <div id="myModalMachine" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            Send Email to lab user!
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/send-email" method="post" id="reused_form">
+                            <p> Send your message to the lab user in the form below. </p>
+                            <div class="form-group">
+                                <label for="subject"> Name:</label>
+                                <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="from"> Your Email:</label>
+                                <input type="email" class="form-control" id="from" name="from" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="to"> Send to:</label>
+                                <input type="email" class="form-control" id="to" name="to" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="body"> Message:</label>
+                                <textarea class="form-control" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="6000" rows="7"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-lg btn-success btn-block" id="btnContactUs">Post It! &rarr;</button>
+                        </form>
+                        <div id="success_message" style="width:100%; height:100%; display:none; "> <h3>Sent your message successfully!</h3> </div>
+                        <div id="error_message" style="width:100%; height:100%; display:none; "> <h3>Error</h3> Sorry there was an error sending your form. </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p id="demo"></p>
+        
 
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th scope="col">Machine</th>
-              <th scope="col">CPU</th>
-              <th scope="col">RAM</th>
-              <th scope="col">OS</th>
-              <th scope="col">Monitor</th>
-              <th scope="col">Printer</th>
-              <th scope="col">Usage</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row"><%= machine.name %></th>
-              <td><%= machine.CPU %></td>
-              <td><%= machine.RAM %></td>
-              <td><%= machine.OS %></td>
-              <td><%= machine.monitor %></td>
-              <td><%= machine.printer_id %></td>
-              <td><%= session %></td>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Machine</th>
+            <th scope="col">CPU</th>
+            <th scope="col">RAM</th>
+            <th scope="col">OS</th>
+            <th scope="col">Monitor</th>
+            <th scope="col">Printer</th>
+            <th scope="col">Usage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><%= machine.name %></th>
+            <td><%= machine.CPU %></td>
+            <td><%= machine.RAM %></td>
+            <td><%= machine.OS %></td>
+            <td><%= machine.monitor %></td>
+            <td><%= machine.printer_id %></td>
+            <td><%= session %></td>
 
-            </tr>
+          </tr>
 
+          
+        </tbody>
+      </table>
 
-          </tbody>
-        </table>
+    </div>
 
-      </div>
+</main>
 
-    </main>
+<footer>
+  <% include ./partials/footer %>
+</footer>
 
-    <footer>
-      <% include ./partials/footer %>
-    </footer>
+<script>
+function myFunction() {
+  document.getElementById("demo").innerHTML = "Email button clicked";
+}
+</script>
 
-  </body>
+</body>
 </html>
+

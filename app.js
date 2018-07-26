@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const app = express();
 var session = require('express-session');
+var nodeMailer = require('nodemailer');
 
 require('dotenv').config();
 
@@ -38,6 +39,35 @@ app.use('/', rooms);
 app.use('/', machines);
 app.use('/', sessions);
 app.use('/', buildings);
+
+app.post('/send-email', function (req, res) {
+  let transporter = nodeMailer.createTransport({
+      service: 'gmail',
+      auth: {
+          user: 'purduelabstats@gmail.com',
+          pass: 'nrm2018summer'
+      }
+  });
+  let mailOptions = {
+      from: 'purduelabstats@gmail.com', // sender address
+      to: req.body.to, // list of receivers
+      cc: req.body.from,
+      subject: req.body.subject, // Subject line
+      text: req.body.message, // plain text body
+
+      //html: '<b>NodeJS Email Tutorial</b>' // html body
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      console.log('Message %s sent: %s', info.messageId, info.response);
+          //res.render('index.ejs');
+          //res.render('index.ejs', parms);
+      });
+  });
+
 
 
 
