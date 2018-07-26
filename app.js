@@ -44,15 +44,17 @@ app.post('/send-email', function (req, res) {
   let transporter = nodeMailer.createTransport({
       service: 'gmail',
       auth: {
-          user: 'hihms95@gmail.com',
-          pass: 'anstjs95!'
+          user: 'purduelabstats@gmail.com',
+          pass: 'nrm2018summer'
       }
   });
   let mailOptions = {
-      from: req.body.from, // sender address
+      from: 'purduelabstats@gmail.com', // sender address
       to: req.body.to, // list of receivers
+      cc: req.body.from,
       subject: req.body.subject, // Subject line
       text: req.body.message, // plain text body
+
       //html: '<b>NodeJS Email Tutorial</b>' // html body
   };
 
