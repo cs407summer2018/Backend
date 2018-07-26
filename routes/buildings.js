@@ -5,6 +5,28 @@ var authHelper = require('../helpers/auth');
 var knex = require('knex')(config);
 var path = require('path');
 
+var {google} = require('googleapis');
+var privatekey = require("../config/privatekey.json");
+
+// configure a JWT auth client
+let jwtClient = new google.auth.JWT(
+    privatekey.client_email,
+    null,
+    privatekey.private_key,
+    ['https://www.googleapis.com/auth/spreadsheets',
+     'https://www.googleapis.com/auth/drive',
+     'https://www.googleapis.com/auth/calendar']);
+
+jwtClient.authorize(function (err, tokens) {
+    if (err) {
+        console.log(err);
+        return;
+    } else {
+        console.log("Successfully connected!");
+    }
+});
+
+
 router.post('/addBuilding', function(req, res) {
     knex('buildings').insert(req.body).then(function(result) {
         res.json({sucess: true});
@@ -14,75 +36,108 @@ router.post('/addBuilding', function(req, res) {
 });
 
 router.get('/:building', async function(req, res, next) {
-    let parms = { title: 'Home', active: { home: true }};
+    let parms = { title: 'Home', active: { home: true }, rows: []};
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
     let userName;
     if (req.cookies) {
-      userName = req.cookies.graph_user_name;
+        userName = req.cookies.graph_user_name;
     }
-
 
     if (accessToken && userName) {
-      parms.user = userName;
-      parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
-      parms.signInUrl = null;
+        parms.user = userName;
+        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+        parms.signInUrl = null;
     } else {
-      parms.signInUrl = authHelper.getAuthUrl();
-      parms.debug = parms.signInUrl;
-      parms.user = null;
+        parms.signInUrl = authHelper.getAuthUrl();
+        parms.debug = parms.signInUrl;
+        parms.user = null;
     }
+
+    parms.building = req.params.building;
 
     knex.select().from('buildings')
-  .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
-  .where('abbrev', req.params.building)
-  .then(function(rooms) {
-    console.log(rooms);
-    if (rooms.length > 0 ) {
-        knex.raw('select id, room_id, count(room_id) as occurances from machines where id in \
-    (select distinct machine_id as id from usages \
-     where end_time is null and \
-     machine_id in (select id from machines where room_id in (select id from rooms)) \
-     order by machine_id) \
-    group by room_id \
-    order by room_id;').then(function(results) {
-      rooms.forEach(function(room) {
-        var room_id = room.id;
-        var asd = results[0];
-        console.log(asd);
-        var filtered_row = asd.filter(function(row){
-          console.log(row.room_id);
-          console.log(room_id);
-          return row.room_id === room_id;
+        .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
+        .where('buildings.abbrev', req.params.building)
+        .then(function(rooms) {
+            knex.raw('select id, room_id, count(room_id) as occurances from machines where id in \
+                    (select distinct machine_id as id from usages \
+                    where end_time is null and \
+                    machine_id in (select id from machines where room_id in (select id from rooms)) \
+                    and device LIKE \'%tty%\'\
+                    order by machine_id) \
+                    group by room_id \
+                    order by room_id;')
+            .then(function(results) {
+            rooms.forEach(function(room) {
+            var room_id = room.id;
+            var filtered_row = results[0].filter(function(row){
+                return row.room_id === room_id;
+            });
+            if (filtered_row.length == 0) {
+                room.occurances = 0;
+            } else {
+                var occurances = filtered_row[0].occurances;
+                room.occurances = occurances;
+            }
+            room.availability = (room.occurances == room.capacity) ? 'Full' : 'Open';
+
+            let calendar = google.calendar('v3');
+            let calendar_options = {
+                auth: jwtClient,
+                calendarId: room.google_calender_id,
+                timeMin: (new Date()).toISOString(),
+                maxResults: 10,
+                singleEvents: true,
+                orderBy: 'startTime'
+            };
+            calendar.events.list(
+                calendar_options,
+                function (err, response) {
+                    if (err) {
+                        room.availability = 'Error';
+                    } else {
+                        var startTime = new Date(response.data.items[0].start.dateTime);
+                        var endTime = new Date(response.data.items[0].end.dateTime);
+                        var timeNow = new Date();
+                        if (startTime <= timeNow && timeNow <= endTime) {
+                            room.availability = "Class";
+                        }
+                    }
+                });
         });
-        if (filtered_row.length == 0) {
-          console.log(filtered_row);
-          console.log(filtered_row.lenth);
-          room.occurances = 0;
-        } else {
-          var occurances = filtered_row[0].occurances;
-          room.occurances = occurances;
-        }
-      });
-      console.log(rooms);
         parms.rows = rooms;
-        parms.building = req.params.building;
-        parms.rooms = rooms;
-        res.render('../views/building.ejs', parms);
+        if (userName) {
+            knex.select().from('favorites').where('user_id', function() {
+                this.select('id').from('users').where('name', userName);
+            })
+                .then(function(favorites) {
+                    rooms.forEach(function(room) {
+                        var room_id = room.id;
+                        var filtered_row = favorites.filter(function(favorite){
+                            return favorite.room_id === room_id;
+                        });
+                        if (filtered_row.length == 0) {
+                            room.favorited = 0;
+                        } else {
+                            room.favorited = 1;
+                        }
+                    });
+
+                    console.log(rooms);
+                    res.render('building.ejs', parms);
+                });
+        } else {
+            res.render('building.ejs', parms);
+        }
     });
 
-    } else {
-        res.render('../views/error.ejs', {error: "invalid url"});
-    }
-  }).catch(function(err) {
-    res.json({error: 'error3'});
-  });
+        }).catch(function(err) {
+            parms.error = err;
+            res.render('error.ejs', parms);
+        });
 
-    knex.select().from('rooms').where('building_id', function() {
-        this.select('id').from('buildings').where('abbrev', req.params.building).first();
-    }).then(function(rooms) {
-
-    });
 });
+
 
 module.exports = router;

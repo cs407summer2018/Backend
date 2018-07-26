@@ -15,92 +15,217 @@
 
     <main>
       <div class="jumbotron">
-        <h1><%= building %></h1>
-        <ul>
+        <div align="center">
+            <img class="headImg" src="<%= building %>-ext.png">
+            <h1><%= building %></h1>
+        </div>
 
-          <table class="table table-bordered">
-            <thead>
-              <tr>
+        <input class="form-control" id="myInput" type="text" placeholder="Search..">
+        <br>
 
-                <th scope="col">Rooms</th>
+        <table class="table table-bordered" id="myTable">
+          <thead>
+            <tr>
+              <% if (user) { %>
+                <th scope="col" onclick="sortTable(0)">Favorite</th>
+                <th scope="col" onclick="sortTable(1)">Building</th>
+                <th scope="col" onclick="sortTable(2)">Room</th>
+                <th scope="col" onclick="sortTable(3)">Machine Name</th>
+                <th scope="col" onclick="sortTable(4)">OS</th>
+                <th scope="col" onclick="sortTable(5)">Availability</th>
+                <th scope="col" onclick="sortTable(6)">Machines in Use</th>
+              <% } else { %>
+                <th scope="col" onclick="sortTable(0)">Building</th>
+                <th scope="col" onclick="sortTable(1)">Room</th>
+                <th scope="col" onclick="sortTable(2)">Machine Name</th>
+                <th scope="col" onclick="sortTable(3)">OS</th>
+                <th scope="col" onclick="sortTable(4)">Availability</th>
+                <th scope="col" onclick="sortTable(5)">Machines in Use</th>
+              <% } %>
 
 
-              </tr>
+            </tr>
+          </thead>
+          <tbody id="myTable2">
+            <% rows.forEach((row, idx) => { %>
 
+                <tr class='clickable-row' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
+                  <% if (user) { %>
 
-              <br>
-
-              <table class="table table-bordered" id="myTable">
-                <thead>
-                  <tr>
-                    <% if (user) { %>
-                    <th scope="col" onclick="sortTable(0)">Favorite</th>
-                    <th scope="col" onclick="sortTable(1)">Building</th>
-                    <th scope="col" onclick="sortTable(2)">Room</th>
-                    <th scope="col" onclick="sortTable(3)">Machine Name</th>
-                    <th scope="col" onclick="sortTable(4)">OS</th>
-                    <th scope="col" onclick="sortTable(5)">Availability</th>
-                    <th scope="col" onclick="sortTable(6)">Occupants</th>
-                    <th scope="col" onclick="sortTable(6)">Capacity</th>
+                    <% if (row.favorited == 1) { %>
+                      <td class='favorite' style="color:#c28e0e">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="color:#c28e0e">
+                          </span>
+                        </div>
+                      </td>
                     <% } else { %>
-                    <th scope="col" onclick="sortTable(0)">Building</th>
-                    <th scope="col" onclick="sortTable(1)">Room</th>
-                    <th scope="col" onclick="sortTable(2)">Machine Name</th>
-                    <th scope="col" onclick="sortTable(3)">OS</th>
-                    <th scope="col" onclick="sortTable(4)">Availability</th>
-                    <th scope="col" onclick="sortTable(6)">Occupants</th>
-                    <th scope="col" onclick="sortTable(6)">Capacity</th>
+                      <td class='favorite' style="color:black">
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="visibility:none" style="color:black">
+                          </span>
+                        </div>
+                      </td>
                     <% } %>
-
-
-                  </tr>
-                </thead>
-                <tbody id="myTable2">
-
-                  <% rooms.forEach((row) => { %>
-
-                  <tr>
-                    <% if (user) { %>
-                    <td class='favorite'>fave</td>
+                      <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
+                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
+                    <td><%= row.machine_name %></td>
+                    <td><%= row.OS %></td>
+                    <td id="availability<%= idx %>"><%= row.availability %></td>
+                    <td><%= row.occurances %> of <%= row.capacity %></td>
+                  <% } else { %>
                     <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td class='availability'><%= row.availability %></td>
-                    <td><%= row.occurances %></td>
-                    <td><%= row.capacity %></td>
-                    <% } else { %>
-                    <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
-                    <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
-                    <td><%= row.machine_name %></td>
-                    <td><%= row.OS %></td>
-                    <td class='availability'><%= row.availability %></td>
-                    <td><%= row.occurances %></td>
-                    <td><%= row.capacity %></td>
-                    <% } %>
+                    <td id="availability<%= idx %>"><%= row.availability %></td>
+                    <td><%= row.occurances %> of <%= row.capacity %></td>
+                  <% } %>
 
-                  </tr>
+                </tr>
 
-                  <% }) %>
+            <% }) %>
 
-                </tbody>
-              </table>
+          </tbody>
+        </table>
 
 
+        <% if (user) { %>
+          <script>
+             $(document).ready(function() {
+              sortTable(0);
+            });
+          </script>
+        <% } %>
 
 
-            </thead>
-            <tbody>
+        <script>
+        jQuery(document).ready(function($) {
+          $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+          });
+        });
+
+        $(document).ready(function(){
+          $('button').click(function(){
+            $('.alert').show()
+          }) 
+        });
+
+        $(document).ready(function(){
+          $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable2 tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+          var num_rows = $("#row_length").text
+          //alert('hello1');
+          var i;
+          for(i = 0; i < num_rows; i++) {
+            alert('hello2');
+            $("#availability0").onload(function() {
+
+            })
+          }
+        });
+
+        $(".favorite").click(function() {
+
+          var $row = $(this).closest("tr");    // Find the row
+          var $text = $row.find(".room").text(); // Find the text
+
+          var color = $(this).find('.glyphicon').css("color");
+          var fav = 0;
+
+          if (color == "rgb(194, 142, 14)") {
+            $(this).find('.glyphicon').css("color", "#000000");
+            fav = 0;
+          } else {
+            $(this).find('.glyphicon').css("color", "#c28e0e");
+            fav = 1;
+          }
+
+
+          var $data = {
+            room: $text,
+            favorite: fav // this variable is dependent on the color
+          }
+
+          $.ajax({
+            type: "POST",
+            url: '/favorite/addFavorite',
+            data: $data,
+            success: null,
+            dataType: null
+          });
+
+          // Change the color to opposite of what it is now
+          // call endpoint to add to favorite
+
+        });
 
 
 
-        </ul>
+        function sortTable(n) {
+          var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          table = document.getElementById("myTable");
+          switching = true;
+          //Set the sorting direction to ascending:
+          dir = "asc";
+          /*Make a loop that will continue until
+          no switching has been done:*/
+          while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+              //start by saying there should be no switching:
+              shouldSwitch = false;
+              /*Get the two elements you want to compare,
+              one from current row and one from the next:*/
+              x = rows[i].getElementsByTagName("TD")[n];
+              y = rows[i + 1].getElementsByTagName("TD")[n];
+              console.log("x: " + x.innerHTML);
+              console.log("y: " + y.innerHTML);
+              /*check if the two rows should switch place,
+              based on the direction, asc or desc:*/
+              if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch= true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            if (shouldSwitch) {
+              /*If a switch has been marked, make the switch
+              and mark that a switch has been done:*/
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              //Each time a switch is done, increase this count by 1:
+              switchcount ++;
+            } else {
+              /*If no switching has been done AND the direction is "asc",
+              set the direction to "desc" and run the while loop again.*/
+              if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+              }
+            }
+          }
+        }
+        </script>
 
-
-</tbody>
-</table>
-
-
+            
 </div>
 </main>
 
