@@ -1,3 +1,4 @@
+
 var express = require('express');
 var router = express.Router();
 var authHelper = require('../helpers/auth');
@@ -73,7 +74,9 @@ router.get('/:building/:room/:machine', async function(req, res) {
                     res.render('../views/machine.ejs', parms);
                 });
             } else {
-                res.render('../views/error.ejs', {error: "invalid URL"});
+              parms.error = "invalid URL";
+              res.render('../views/error.ejs', parms);
+              //res.render('../views/error.ejs', {error: "invalid URL"});
             }
         });
 

@@ -48,10 +48,16 @@ app.post('/send-email', function (req, res) {
           pass: 'nrm2018summer'
       }
   });
+  console.log("eeee: "+ req.cookies.graph_user_name);
+  var user_email = req.cookies.graph_user_name + "@purdue.edu"
+  console.log("eeee2222222: "+ req.body.machine);
+  console.log("Rooom: "+ req.body.room);
+
   let mailOptions = {
       from: 'purduelabstats@gmail.com', // sender address
-      to: req.body.to, // list of receivers
-      cc: req.body.from,
+      // to: req.body.to, // list of receivers
+      to: ['hwang123@purdue.edu', 'rex.suter@gmail.com'], // list of receivers
+      cc: user_email, // sender is CC'ed
       subject: req.body.subject, // Subject line
       text: req.body.message, // plain text body
 

@@ -72,7 +72,8 @@ router.get('/:building', async function(req, res, next) {
     });
 
     } else {
-        res.render('../views/error.ejs', {error: "invalid url"});
+      parms.error = "invalid url";
+      res.render('../views/error.ejs', parms);
     }
   }).catch(function(err) {
     res.json({error: 'error3'});
