@@ -15,8 +15,22 @@
     <div class="jumbotron">
         <div align="center">
             <img class="headImg" src="/<%= building %>-ext.png"></img>
-            <h1 id="room-name"><%= building + " " + room.room_number %></h1>
-            <p>Availability: <%= availability %></p>
+            <h1><%= building + " " + room.room_number %></h1>
+            <% if (availability == "Open") { %>
+              <p>Availability: 
+                <span style="color:rgb(0, 200, 0)"><%= availability %></span>
+              </p>    
+            <% } else if (availability == "Class In Session") { %>
+              <p>Availability: 
+                <span style="color:#ffcc00"><%= availability %></span>
+              </p> 
+
+            <% } else if (availability == "Full") { %> 
+              <p>Availability: 
+                <span style="color:#ff0000"><%= availability %></span>
+              </p> 
+            <% } %> 
+
            <div style="display: inline-block">
                 <% if (user) { 
                     var set = 0
