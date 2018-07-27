@@ -27,7 +27,7 @@
 
         <table class="table table-bordered" id="myTable">
           <thead>
-            <tr>
+            <tr >
               <% if (user) { %>
                 <th scope="col" onclick="sortTable(0)">Favorite</th>
                 <th scope="col" onclick="sortTable(1)">Building</th>
@@ -49,9 +49,9 @@
             </tr>
           </thead>
           <tbody id="myTable2">
-            <% rows.forEach((row, idx) => { %>
+            <% rows.forEach((row) => { %>
 
-                <tr class='clickable-row' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
+                <tr class='clickable-row room-table' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
                   <% if (user) { %>
 
                     <% if (row.favorited == 1) { %>
@@ -73,15 +73,15 @@
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td id="availability<%= idx %>"><%= row.availability %></td>
-                    <td><%= row.occurances %> of <%= row.capacity %></td>
+                    <td class="availability"><%= row.availability %></td>
+                    <td class="occupants"><%= row.occurances %> of <%= row.capacity %></td>
                   <% } else { %>
                     <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td id="availability<%= idx %>"><%= row.availability %></td>
-                    <td><%= row.occurances %> of <%= row.capacity %></td>
+                    <td class="availability"></td>
+                    <td class="occupants"><%= row.occurances %> of <%= row.capacity %></td>
                   <% } %>
 
                 </tr>
@@ -108,28 +108,34 @@
           });
         });
 
-        $(document).ready(function(){
-          $('button').click(function(){
-            $('.alert').show()
-          }) 
-        });
+        $(document).ready(function() {
+          var availability = "";
+          var roomTable = $(".room-table");
+          roomTable.each(async (idx, row) => {
+            var room = $(row).find('.room').text();
+            var occupants = $(row).find(".occupants").text();
+            var res = occupants.split(" of ");
 
-        $(document).ready(function(){
-          $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#myTable2 tr").filter(function() {
-              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            if (res[0] == res[1]) {
+              availability = "Full";
+            }
+          
+            var data = {
+              room: room,
+            }
+
+            await $.ajax({
+              type: "POST",
+              url: '/rooms/availability',
+              data: data,
+              dataType: 'json',
+              success: function(data) {
+                availability = data.availability;
+                $(row).find('.availability').text(availability);
+              },
             });
+            $(row).find('.availability').text(availability);
           });
-          var num_rows = $("#row_length").text
-          //alert('hello1');
-          var i;
-          for(i = 0; i < num_rows; i++) {
-            alert('hello2');
-            $("#availability0").onload(function() {
-
-            })
-          }
         });
 
         $(".favorite").click(function() {
