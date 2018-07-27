@@ -18,9 +18,11 @@
             <h1><%= building + " " + room.room_number %></h1>
             <p>Availability: <%= availability %></p>
            <div style="display: inline-block">
+                <% if (user) { %>
               <button id="email-lab" data-placement="top" title="Email Lab Users" type="button" class="btn" data-toggle="modal" data-target="#myModalRoom">
                   <span class="glyphicon glyphicon-envelope" style="font-size: 1.5em;"></span>
               </button>
+                <% } %>
               <button id="lab-schedule" data-placement="top" title="View Lab Schedule" type="button" class="btn">
                   <span class="glyphicon glyphicon-calendar" style="font-size: 1.5em;"></span>
               </button>
@@ -122,9 +124,16 @@
           <table class="table table-bordered" id="machine-table">
             <thead>
               <tr>
-                  <th scope="col" onclick="sortTable(0)">Machine Name</th>
-                  <th scope="col" onclick="sortTable(1)">Email</th>
-                  <th scope="col" onclick="sortTable(2)">In Use</th>
+
+                    <% if (user) { %>
+                        <th scope="col" onclick="sortTable(0)">Machine Name</th>
+                        <th scope="col" onclick="sortTable(1)">Email</th>
+                        <th scope="col" onclick="sortTable(2)">In Use</th>
+                    <% } else { %>
+                        <th scope="col" onclick="sortTable(0)">Machine Name</th>
+                        <th scope="col" onclick="sortTable(1)">In Use</th>
+                    <% } %>
+
               </tr>
             </thead>
             <tbody>
@@ -133,6 +142,7 @@
               <tr>
 
                 <td><%= machine.name %></td>
+                <% if (user) { %>
                 <td class='email'>
                     <div class='centered'>
                       <span class="glyphicon glyphicon-envelope" aria-hidden="true" type="button" data-toggle="modal" data-target="#myModalMachine">
@@ -173,6 +183,7 @@
                       </div>
                   </div>
                  </td>
+                 <% } %>
                  <td>True</td>
               </tr>
 

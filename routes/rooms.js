@@ -97,44 +97,54 @@ router.get('/:building/:room', async function(req, res) {
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
-                        if (machines.length > 0) {
-                            var availability = "";
-                            let calendar = google.calendar('v3');
-                            let calendar_options = {
-                                auth: jwtClient,
-                                calendarId: machines[0].google_calender_id,
-                                timeMin: (new Date()).toISOString(),
-                                maxResults: 10,
-                                singleEvents: true,
-                                orderBy: 'startTime'};
-                            calendar.events.list(
-                                calendar_options,
-                                function (err, response) {
-                                    if (err) {
-                                        res.render('../views/error.ejs',
-                                                   error=err);
-                                    }
-                                    var startTime = new Date(response.data.items[0].start.dateTime);
-                                    var endTime = new Date(response.data.items[0].end.dateTime);
-                                    var timeNow = new Date();
-                                    if (startTime <= timeNow && timeNow <= endTime) {
-                                        availability = "Class In Session";
-                                    } else {
-                                        availability = "Open";
-                                    }
-                                    parms.machines = machines;
-                                    parms.room = room;
-                                    parms.building = req.params.building;
-                                    parms.availability = availability;
-                                    res.render('../views/room.ejs', parms);
-                                });
-                        } else {
-                            parms.machines = machines;
-                            parms.room = room;
-                            parms.building = req.params.building;
-                            parms.availability = availability;
-                            res.render('../views/room.ejs', parms);
-                        }
+                        //console.log(machines);
+
+                        knex.raw('').then(async function(results) {
+                            console.log(results);
+                            if (machines.length > 0) {
+                                var availability = "";
+                                let calendar = google.calendar('v3');
+                                let calendar_options = {
+                                    auth: jwtClient,
+                                    calendarId: machines[0].google_calender_id,
+                                    timeMin: (new Date()).toISOString(),
+                                    maxResults: 10,
+                                    singleEvents: true,
+                                    orderBy: 'startTime'};
+                                calendar.events.list(
+                                    calendar_options,
+                                    function (err, response) {
+                                        if (err) {
+                                            res.render('../views/error.ejs',
+                                                       error=err);
+                                        }
+                                        var startTime = new Date(response.data.items[0].start.dateTime);
+                                        var endTime = new Date(response.data.items[0].end.dateTime);
+                                        var timeNow = new Date();
+                                        if (startTime <= timeNow && timeNow <= endTime) {
+                                            availability = "Class In Session";
+                                        } else {
+                                            availability = "Open";
+                                        }
+                                        parms.machines = machines;
+                                        parms.room = room;
+                                        parms.building = req.params.building;
+                                        parms.availability = availability;
+                                        res.render('../views/room.ejs', parms);
+                                    });
+                            } else {
+                                parms.machines = machines;
+                                parms.room = room;
+                                parms.building = req.params.building;
+                                parms.availability = availability;
+                                res.render('../views/room.ejs', parms);
+                            }
+                        });
+
+
+
+
+                       
                     });
             } else {
                 res.render('../views/error.ejs', {error: "invalid url"});
