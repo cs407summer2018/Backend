@@ -173,6 +173,7 @@ router.post('/rooms/predictions', async function(req, res) {
     var timeWeekAgoString = timeWeekAgo.toISOString().slice(0, 19).replace('T', ' ');
     var secondsInHour = 3600000;
     var hoursInWeek = 192;
+    console.log(timeWeekAgoString);
     console.log("timeNow: " + timeNow.toISOString().slice(0, 19).replace('T', ' '));
     var arrayOfTimesPast = new Array(hoursInWeek).fill(0);
 
