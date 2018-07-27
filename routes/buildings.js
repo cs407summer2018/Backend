@@ -46,11 +46,11 @@ router.get('/:building', async function(req, res, next) {
 
     if (accessToken && userName) {
         parms.user = userName;
-        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+        //parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
         parms.signInUrl = null;
     } else {
         parms.signInUrl = authHelper.getAuthUrl();
-        parms.debug = parms.signInUrl;
+        //parms.debug = parms.signInUrl;
         parms.user = null;
     }
 
@@ -131,7 +131,6 @@ router.get('/:building', async function(req, res, next) {
             res.render('building.ejs', parms);
         }
     });
-
         }).catch(function(err) {
             parms.error = err;
             res.render('error.ejs', parms);

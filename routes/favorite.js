@@ -17,7 +17,6 @@ router.post('/addFavorite', async function(req, res, next) {
     }
 
     if (accessToken && userName) {
-        console.log("FAVORITE STRING: " + fav);
         if (fav == 1) {
             knex.raw('INSERT INTO favorites (user_id, room_id) VALUES ( \
                 (SELECT id FROM users WHERE name = \''+ userName +'\' ), \
