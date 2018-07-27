@@ -82,4 +82,5 @@ router.get('/:building/:room/:machine', async function(req, res) {
 
 });
 
+
 module.exports = router;

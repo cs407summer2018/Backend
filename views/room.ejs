@@ -13,22 +13,122 @@
 
 <main>
     <div class="jumbotron">
-        <h1><%= building + " " + room.room_number %></h1>     
+        <div align="center">
+            <img class="headImg" src="/<%= building %>-ext.png"></img>
+            <h1><%= building + " " + room.room_number %></h1>
+            <p>Availability: <%= availability %></p>
+           <div style="display: inline-block">
+              <button id="email-lab" data-placement="top" title="Email Lab Users" type="button" class="btn" data-toggle="modal" data-target="#myModalRoom">
+                  <span class="glyphicon glyphicon-envelope" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-schedule" data-placement="top" title="View Lab Schedule" type="button" class="btn">
+                  <span class="glyphicon glyphicon-calendar" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-footage" data-placement="top" title="View Lab Footage" type="button" class="btn">
+                  <span class="glyphicon glyphicon-facetime-video" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-busy-times" data-placement="top" title="View Busy Times" type="button" class="btn">
+                  <span class="glyphicon glyphicon-stats" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-heat-map" data-placement="top" title="View Heat Map" type="button" class="btn">
+                  <span class="glyphicon glyphicon-fire" style="font-size: 1.5em;"></span>
+              </button>
+              <button id="lab-specs" data-placement="top" title="View Lab Specs" type="button" class="btn">
+                  <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em;"></span>
+              </button>
+            </div>
 
-        <p>Avaliablity: <%= avaliablity %></p>
+            <br></br>
+
+            <div id="lab-schedule-div" class="content">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=<%= room.google_calender_id %>&amp;color=%23182C57&amp;ctz=America%2FNew_York"
+                style="border-width:0"
+                frameborder="0"
+                width="600" height="450"
+                scrolling="no">
+              </iframe>
+            </div>
+
+            <div id="lab-footage-div" class="content">
+              <img src="https://www.cs.purdue.edu/cams-delayed/<%= building + room.room_number %>.jpg">
+              </img>
+            </div>
+
+            <div id="lab-busy-times-div" class="content">
+
+            </div>
+            
+            <div id="lab-heat-map-div" class="content">
+
+            </div>
+
+            <div id="lab-specs-div" class="content" align="left" style="padding-left: 20%;">
+              <p style="font-size: 125%;">
+                <b>Capacity</b>: <%= machines[0].capacity %>
+                <br><b>CPU</b>: <%= machines[0].CPU %>
+                <br> <b>RAM</b>: <%= machines[0].RAM%>
+                <br> <b>Monitor</b>: <%= machines[0].monitor%>
+                <br> <b>OS</b>: <%= machines[0].OS%>
+                <br> <b>Printer</b>: <%= machines[0].printer%>
+                <br> <b>Printer id</b>: <%= machines[0].printer_id%>
+
+              </p>
+            </div>
+
+            <br>
+
+        </div>  
+          <div id="myModalRoom" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            Send Email to lab user!
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/send-email" method="post" id="reused_form">
+                            <p> Send your message to the lab user in the form below. </p>
+                            <div class="form-group">
+                                <label for="subject"> Name:</label>
+                                <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="from"> Your Email:</label>
+                                <input type="email" class="form-control" id="from" name="from" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="to"> Send to:</label>
+                                <input type="email" class="form-control" id="to" name="to" required maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="body"> Message:</label>
+                                <textarea class="form-control" style="resize: none" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="256" rows="7"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-lg btn-success btn-block" id="btnContactUs">Post It! &rarr;</button>
+                        </form>
+                        <div id="success_message" style="width:100%; height:100%; display:none; "> <h3>Sent your message successfully!</h3> </div>
+                        <div id="error_message" style="width:100%; height:100%; display:none; "> <h3>Error</h3> Sorry there was an error sending your form. </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
         <ul>
 
-          <table class="table table-bordered">
+          <table class="table table-bordered" id="machine-table">
             <thead>
               <tr>
-
-                <th scope="col">Machine</th>
-                <th scope="col">Email</th>
+                  <th scope="col" onclick="sortTable(0)">Machine Name</th>
+                  <th scope="col" onclick="sortTable(1)">Email</th>
+                  <th scope="col" onclick="sortTable(2)">In Use</th>
 
               </tr>
             </thead>
             <tbody>
-
 
 
               <% machines.forEach((machine, index) => { %>
@@ -83,32 +183,9 @@
               <% }) %>
         </ul>
 
-
+  </div>
 </tbody>
 </table>
-
-<div>
-  <div class="halfer">
-    <div class="responsiveCal">
-      <iframe
-        src="https://calendar.google.com/calendar/embed?mode=WEEK&amp;height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=<%= room.google_calender_id %>&amp;color=%23182C57&amp;ctz=America%2FNew_York"
-        style="border-width:0"
-        frameborder="0"
-        width="600" height="450"
-        scrolling="no"></iframe>
-    </div>
-  </div>
-  <div class="halfer">
-    <div class="responsiveParent">
-      <img
-        src="https://www.cs.purdue.edu/cams-delayed/<%= building + room.room_number %>.jpg"
-        class="responsiveImg"></img>
-    </div>
-  </div>
-</div>
-
-
-
 </div>
 </main>
 
@@ -117,9 +194,84 @@
 </footer>
 
 <script>
-function myFunction() {
-  document.getElementById("demo").innerHTML = "Email button clicked";
-}
+  $(document).ready(function(){
+      $('[class="btn"]').tooltip({ trigger: "hover" });   
+  });
+
+  $(function() {
+    $(".btn").on("click",function(e) {
+      if (this.id == "email-lab") {
+        return;
+      }
+      if ($("#"+this.id+"-div").is(":visible")) {
+        e.preventDefault();
+        $(".content").hide();
+        $("#"+this.id+"-div").hide();
+        return;
+      }
+      e.preventDefault();
+      $(".content").hide();
+      $("#"+this.id+"-div").show();
+    });
+  });
+
+        function sortTable(n) {
+          var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          table = document.getElementById("machine-table");
+          switching = true;
+          //Set the sorting direction to ascending:
+          dir = "asc";
+          /*Make a loop that will continue until
+          no switching has been done:*/
+          while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+              //start by saying there should be no switching:
+              shouldSwitch = false;
+              /*Get the two elements you want to compare,
+              one from current row and one from the next:*/
+              x = rows[i].getElementsByTagName("TD")[n];
+              y = rows[i + 1].getElementsByTagName("TD")[n];
+              console.log("x: " + x.innerHTML);
+              console.log("y: " + y.innerHTML);
+              /*check if the two rows should switch place,
+              based on the direction, asc or desc:*/
+              if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch= true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            if (shouldSwitch) {
+              /*If a switch has been marked, make the switch
+              and mark that a switch has been done:*/
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              //Each time a switch is done, increase this count by 1:
+              switchcount ++;
+            } else {
+              /*If no switching has been done AND the direction is "asc",
+              set the direction to "desc" and run the while loop again.*/
+              if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+              }
+            }
+          }
+        }
+
 </script>
 
 </body>

@@ -27,27 +27,34 @@ jwtClient.authorize(function (err, tokens) {
 });
 
 router.post('/rooms/availability', function(req, res) {
-    var avaliablity = "";
-    var google_calander_id = req.body.google_calander_id;
-    let calendar = google.calendar('v3');
-    calendar.events.list({
-        auth: jwtClient,
-        calendarId: google_calender_id,
-        timeMin: (new Date()).toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime'},
-                         function (err, response) {
-                             var startTime = new Date(response.data.items[0].start.dateTime);
-                             var endTime = new Date(response.data.items[0].end.dateTime);
-                             var timeNow = new Date();
-                             if (startTime <= timeNow && timeNow <= endTime) {
-                                 avaliablity = "Class In Session";
-                             } else {
-                                 avaliablity = "Open";
-                             }
-                         });
-    res.json({avaliablity: avaliablity});
+    var availability = "wait";
+    knex.select('google_calender_id').from('rooms').where('room_number', req.body.room).first().then(function(result) {
+        let calendar = google.calendar('v3');
+        calendar.events.list({
+            auth: jwtClient,
+            calendarId: result.google_calender_id,
+            timeMin: (new Date()).toISOString(),
+            maxResults: 10,
+            singleEvents: true,
+            orderBy: 'startTime'},
+            function (err, response) {
+                if (err) {
+                    availability = 'Error';
+                } else {
+                    var startTime = new Date(response.data.items[0].start.dateTime);
+                    var endTime = new Date(response.data.items[0].end.dateTime);
+                    var timeNow = new Date();
+                    if (startTime <= timeNow && timeNow <= endTime) {
+                        availability = "Class In Session";
+                    } else {
+                        availability = "Open";
+                    }
+                }
+                res.json({availability: availability});
+            });
+
+    });
+   
 });
 
 router.post('/addRoom', function(req, res) {
@@ -59,7 +66,7 @@ router.post('/addRoom', function(req, res) {
 })
 
 router.get('/:building/:room', async function(req, res) {
-    let parms = { title: 'Home', active: { home: true }, rows: []};
+    let parms = { title: 'Home', active: { home: true }, rows: [] };
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
 
     let userName;
@@ -69,11 +76,11 @@ router.get('/:building/:room', async function(req, res) {
 
     if (accessToken && userName) {
         parms.user = userName;
-        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+        //parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
         parms.signInUrl = null;
     } else {
         parms.signInUrl = authHelper.getAuthUrl();
-        parms.debug = parms.signInUrl;
+        //parms.debug = parms.signInUrl;
         parms.user = null;
     }
 
@@ -86,11 +93,12 @@ router.get('/:building/:room', async function(req, res) {
                 knex.select().from('buildings')
                     .rightOuterJoin('rooms', 'buildings.id', 'rooms.building_id')
                     .rightOuterJoin('machines', 'rooms.id', 'machines.room_id')
+                    .rightOuterJoin('specifications', "rooms.id", "specifications.room_id")
                     .where('abbrev', req.params.building)
                     .andWhere('room_number', req.params.room)
                     .then(function(machines) {
                         if (machines.length > 0) {
-                            var avaliablity = "";
+                            var availability = "";
                             let calendar = google.calendar('v3');
                             let calendar_options = {
                                 auth: jwtClient,
@@ -111,21 +119,21 @@ router.get('/:building/:room', async function(req, res) {
                                     var endTime = new Date(response.data.items[0].end.dateTime);
                                     var timeNow = new Date();
                                     if (startTime <= timeNow && timeNow <= endTime) {
-                                        avaliablity = "Class in session";
+                                        availability = "Class In Session";
                                     } else {
-                                        avaliablity = "open";
+                                        availability = "Open";
                                     }
                                     parms.machines = machines;
                                     parms.room = room;
                                     parms.building = req.params.building;
-                                    parms.avaliablity = avaliablity;
+                                    parms.availability = availability;
                                     res.render('../views/room.ejs', parms);
                                 });
                         } else {
                             parms.machines = machines;
                             parms.room = room;
                             parms.building = req.params.building;
-                            parms.avaliablity = avaliablity;
+                            parms.availability = availability;
                             res.render('../views/room.ejs', parms);
                         }
                     });
