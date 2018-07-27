@@ -42,9 +42,6 @@
               <button id="lab-busy-times" data-placement="top" title="View Busy Times" type="button" class="btn">
                   <span class="glyphicon glyphicon-stats" style="font-size: 1.5em;"></span>
               </button>
-              <button id="lab-heat-map" data-placement="top" title="View Heat Map" type="button" class="btn">
-                  <span class="glyphicon glyphicon-fire" style="font-size: 1.5em;"></span>
-              </button>
               <button id="lab-specs" data-placement="top" title="View Lab Specs" type="button" class="btn">
                   <span class="glyphicon glyphicon-list-alt" style="font-size: 1.5em;"></span>
               </button>
@@ -110,9 +107,9 @@
               </div>
               <div class="modal-body">
                   <form action="/send-email" method="post" class="able reused_form">
-                      <p> Send your message to the lab user in the form below. </p>
+                      <p style="font-size: 125%;"> Send your message to the lab user in the form below. </p>
                       <div class="form-group">
-                          <label for="subject"> Name:</label>
+                          <label for="subject"> Subject:</label>
                           <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
                           <input type = 'hidden' name='room' value=<%= room.room_number %>>
                       </div>
@@ -193,9 +190,9 @@
                             </div>
                             <div class="modal-body">
                                 <form action="/send-email" method="post" id="reused_form">
-                                    <p> Send your message to the lab user in the form below. </p>
+                                    <p style="font-size: 125%;"> Send your message to the lab user in the form below. </p>
                                     <div class="form-group">
-                                        <label for="subject"> Name:</label>
+                                        <label for="subject"> Subject:</label>
                                         <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
                                         <input type = 'hidden' name='machine' value=<%= machine.name %>>
                                     </div>

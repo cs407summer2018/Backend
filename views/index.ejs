@@ -89,14 +89,14 @@
                                   <div class="modal-header">
                                       <button type="button" class="close" data-dismiss="modal">&times;</button>
                                       <h4 class="modal-title">
-                                          Send Email to lab user!
+                                          Send email to all lab users!
                                       </h4>
                                   </div>
                                   <div class="modal-body">
                                       <form action="/send-email" method="post" class="reused_form">
-                                          <p> Send your message to the lab user in the form below. </p>
+                                          <p style="font-size: 125%;"> Send your message to all the lab users in the form below. </p>
                                           <div class="form-group">
-                                              <label for="subject"> Name:</label>
+                                              <label for="subject"> Subject:</label>
                                               <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
                                               <input type = 'hidden' name='room' value=<%= row.room_number %>>
                                           </div>

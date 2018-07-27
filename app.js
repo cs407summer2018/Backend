@@ -110,7 +110,7 @@ SELECT id AS machine_id FROM machines WHERE name = "'+req.body.machine+'" \
         let mailOptions = {
       from: 'purduelabstats@gmail.com', // sender address
       // to: req.body.to, // list of receivers
-      to: 'hihms95@gmail.com', // list of receivers
+      to: email, // list of receivers
       cc: user_email, // sender is CC'ed
       subject: req.body.subject, // Subject line
       text: req.body.message, // plain text body
@@ -150,7 +150,7 @@ SELECT id FROM rooms WHERE room_number = "B146") \
         let mailOptions = {
       from: 'purduelabstats@gmail.com', // sender address
       // to: req.body.to, // list of receivers
-      to: 'hihms95@gmail.com', // list of receivers
+      to: emails, // list of receivers
       cc: user_email, // sender is CC'ed
       subject: req.body.subject, // Subject line
       text: req.body.message, // plain text body
