@@ -52,7 +52,7 @@
             </tr>
           </thead>
           <tbody id="myTable2">
-            <% rows.forEach((row) => { %>
+            <% rows.forEach((row, idx) => { %>
 
                 <tr class='clickable-row room-table' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
                   <% if (user) { %>

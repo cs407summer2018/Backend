@@ -174,7 +174,35 @@ SELECT id FROM rooms WHERE room_number = "B146") \
   });
 
     });
+  } else if (req.body.feedback) {
+    let mailOptions = {
+      from: 'purduelabstats@gmail.com', // sender address
+      // to: req.body.to, // list of receivers
+      to: 'purduelabstats@gmail.com', // list of receivers
+      cc: user_email, // sender is CC'ed
+      subject: req.body.subject, // Subject line
+      text: req.body.message, // plain text body
+
+      //html: '<b>NodeJS Email Tutorial</b>' // html body
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      console.log('Message %s sent: %s', info.messageId, info.response);
+      //res.render('index.ejs');
+      //res.render('index.ejs', parms);
+      //res.render('./views/index.ejs', {user: null, signInUrl: null});
+      // res.redirect(req.get('referer'));
+      res.redirect(req.get('referer'));
+
+    });
+
   }
+
+
+
 });
 
 
