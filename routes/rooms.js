@@ -122,8 +122,8 @@ router.get('/:building/:room', async function(req, res) {
                             calendar_options,
                             function (err, response) {
                                 if (err) {
-                                    res.render('../views/error.ejs',
-                                                error=err);
+                                    params.error = err;
+                                    res.render('../views/error.ejs', params);
                                 }
                                 var startTime = new Date(response.data.items[0].start.dateTime);
                                 var endTime = new Date(response.data.items[0].end.dateTime);
