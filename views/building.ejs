@@ -210,12 +210,12 @@
         $(function() {
           $(".btn").on("click",function(e) {
             if ($("#"+this.id+"-div").is(":visible")) {
-              e.preventDefault();
+              //e.preventDefault();
               $(".content").hide();
               $("#"+this.id+"-div").hide();
               return;
             }
-            e.preventDefault();
+            //e.preventDefault();
             $(".content").hide();
             $("#"+this.id+"-div").show();
           });
