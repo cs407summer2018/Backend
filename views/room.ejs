@@ -19,13 +19,19 @@
             <p>Availability: <%= availability %></p>
            <div style="display: inline-block">
                 <% if (user) { 
+                    var set = 0
                     machines.forEach((machine, index) => {
                         if (machine.usage) {
-                        %> 
-   
-                        <%
+                         set = 1
                         }
                     })
+                    if (set) {
+                        %> 
+                        <button id="email-lab" data-placement="top" title="Email Lab Users" type="button" class="btn" data-toggle="modal" data-target="#myModalRoom">
+                                <span class="glyphicon glyphicon-envelope" style="font-size: 1.5em;"></span>
+                        </button>       
+                        <%
+                    }
                 } %>
               <button id="lab-schedule" data-placement="top" title="View Lab Schedule" type="button" class="btn">
                   <span class="glyphicon glyphicon-calendar" style="font-size: 1.5em;"></span>
