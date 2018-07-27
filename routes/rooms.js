@@ -27,27 +27,34 @@ jwtClient.authorize(function (err, tokens) {
 });
 
 router.post('/rooms/availability', function(req, res) {
-    var availability = "";
-    var google_calander_id = req.body.google_calander_id;
-    let calendar = google.calendar('v3');
-    calendar.events.list({
-        auth: jwtClient,
-        calendarId: google_calender_id,
-        timeMin: (new Date()).toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime'},
-                         function (err, response) {
-                             var startTime = new Date(response.data.items[0].start.dateTime);
-                             var endTime = new Date(response.data.items[0].end.dateTime);
-                             var timeNow = new Date();
-                             if (startTime <= timeNow && timeNow <= endTime) {
-                                 availability = "Class In Session";
-                             } else {
-                                 availability = "Open";
-                             }
-                         });
-    res.json({availability: availability});
+    var availability = "wait";
+    knex.select('google_calender_id').from('rooms').where('room_number', req.body.room).first().then(function(result) {
+        let calendar = google.calendar('v3');
+        calendar.events.list({
+            auth: jwtClient,
+            calendarId: result.google_calender_id,
+            timeMin: (new Date()).toISOString(),
+            maxResults: 10,
+            singleEvents: true,
+            orderBy: 'startTime'},
+            function (err, response) {
+                if (err) {
+                    availability = 'Error';
+                } else {
+                    var startTime = new Date(response.data.items[0].start.dateTime);
+                    var endTime = new Date(response.data.items[0].end.dateTime);
+                    var timeNow = new Date();
+                    if (startTime <= timeNow && timeNow <= endTime) {
+                        availability = "Class In Session";
+                    } else {
+                        availability = "Open";
+                    }
+                }
+                res.json({availability: availability});
+            });
+
+    });
+   
 });
 
 router.post('/addRoom', function(req, res) {
@@ -119,7 +126,6 @@ router.get('/:building/:room', async function(req, res) {
                                     parms.room = room;
                                     parms.building = req.params.building;
                                     parms.availability = availability;
-                                    console.log(machines);
                                     res.render('../views/room.ejs', parms);
                                 });
                         } else {

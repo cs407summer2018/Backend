@@ -119,11 +119,11 @@
       
         <ul>
 
-          <table class="table table-bordered">
+          <table class="table table-bordered" id="machine-table">
             <thead>
               <tr>
                   <th scope="col" onclick="sortTable(0)">Machine Name</th>
-                  <th scope="col" onclick="sortTable(1)">Email Machine User</th>
+                  <th scope="col" onclick="sortTable(1)">Email</th>
                   <th scope="col" onclick="sortTable(2)">In Use</th>
               </tr>
             </thead>
@@ -133,7 +133,47 @@
               <tr>
 
                 <td><%= machine.name %></td>
-
+                <td class='email'>
+                    <div class='centered'>
+                      <span class="glyphicon glyphicon-envelope" aria-hidden="true" type="button" data-toggle="modal" data-target="#myModalMachine">
+                      </span>
+                    </div>
+                    <div id="myModalMachine" class="modal fade" role="dialog">
+                      <div class="modal-dialog">
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">
+                                      Send Email to lab user!
+                                  </h4>
+                              </div>
+                              <div class="modal-body">
+                                  <form action="/send-email" method="post" id="reused_form">
+                                      <p> Send your message to the lab user in the form below. </p>
+                                      <div class="form-group">
+                                          <label for="subject"> Name:</label>
+                                          <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
+                                          <input type = 'hidden' name='room'>
+                                      </div>
+                                      <!-- <div class="form-group">
+                                          <label for="to"> Send to:</label>
+                                          <input type="email" class="form-control" id="to" name="to" required maxlength="50">
+                                      </div> -->
+                                      <div class="form-group">
+                                          <label for="body"> Message:</label>
+                                          <textarea class="form-control" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="6000" rows="7"></textarea>
+                                      </div>
+                                      <button type="submit" class="btn btn-lg btn-success btn-block" id="btnContactUs">Post It! &rarr;</button>
+                                  </form>
+                                  <div id="success_message" style="width:100%; height:100%; display:none; "> <h3>Sent your message successfully!</h3> </div>
+                                  <div id="error_message" style="width:100%; height:100%; display:none; "> <h3>Error</h3> Sorry there was an error sending your form. </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                 </td>
+                 <td>True</td>
               </tr>
 
               <% }) %>
@@ -170,6 +210,64 @@
       $("#"+this.id+"-div").show();
     });
   });
+
+        function sortTable(n) {
+          var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          table = document.getElementById("machine-table");
+          switching = true;
+          //Set the sorting direction to ascending:
+          dir = "asc";
+          /*Make a loop that will continue until
+          no switching has been done:*/
+          while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+              //start by saying there should be no switching:
+              shouldSwitch = false;
+              /*Get the two elements you want to compare,
+              one from current row and one from the next:*/
+              x = rows[i].getElementsByTagName("TD")[n];
+              y = rows[i + 1].getElementsByTagName("TD")[n];
+              console.log("x: " + x.innerHTML);
+              console.log("y: " + y.innerHTML);
+              /*check if the two rows should switch place,
+              based on the direction, asc or desc:*/
+              if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch= true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                  //if so, mark as a switch and break the loop:
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            if (shouldSwitch) {
+              /*If a switch has been marked, make the switch
+              and mark that a switch has been done:*/
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              //Each time a switch is done, increase this count by 1:
+              switchcount ++;
+            } else {
+              /*If no switching has been done AND the direction is "asc",
+              set the direction to "desc" and run the while loop again.*/
+              if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+              }
+            }
+          }
+        }
+
 </script>
 
 </body>
