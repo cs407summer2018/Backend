@@ -59,14 +59,14 @@
                     <% if (row.favorited == 1) { %>
                       <td class='favorite' style="color:#c28e0e">
                         <div class='centered'>
-                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="color:#c28e0e">
+                          <span class="glyphicon glyphicon-star" aria-hidden="true" style="color:#c28e0e">
                           </span>
                         </div>
                       </td>
                     <% } else { %>
                       <td class='favorite' style="color:black">
                         <div class='centered'>
-                          <span class="glyphicon glyphicon-asterisk" aria-hidden="true" style="visibility:none" style="color:black">
+                          <span class="glyphicon glyphicon-star" aria-hidden="true" style="visibility:none" style="color:black">
                           </span>
                         </div>
                       </td>
@@ -75,8 +75,11 @@
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td class='email'>
                       <div class='centered'>
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color:#c28e0e" type="button" data-toggle="modal" data-target="#myModalRoom<%= idx %>">
-                        </span>
+                          <% if (row.occurances == 0) { %>
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color:#bbbbbb"></span>
+                          <% } else { %>
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color:#c28e0e" type="button" data-toggle="modal" data-target="#myModalRoom<%= idx %>"></span>
+                          <% }%>
                       </div>
 
                       <div id="myModalRoom<%= idx %>" class="modal fade" role="dialog">
