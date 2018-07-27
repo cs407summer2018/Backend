@@ -97,6 +97,7 @@ router.get('/:building/:room', async function(req, res) {
             .then(function(machines) {
                 knex.raw('select * from usages where end_time is null and device LIKE \'%tty%\'')
                 .then(async function(results) {
+                    var fullRoom = true;
                     machines.forEach(async function(machine) {
                         var machine_id = machine.id;
                         var filtered_row = results[0].filter(function(row){
@@ -104,6 +105,7 @@ router.get('/:building/:room', async function(req, res) {
                         });
                         if (filtered_row.length == 0) {
                             machine.usage = false;
+                            fullRoom = false;
                         } else {
                             machine.usage = true;
                         }
@@ -133,6 +135,9 @@ router.get('/:building/:room', async function(req, res) {
                                 } else {
                                     availability = "Open";
                                 }
+                                if (fullRoom) {
+                                    availability = "Full";
+                                }
                                 parms.machines = machines;
                                 parms.room = room;
                                 parms.building = req.params.building;
@@ -157,6 +162,31 @@ router.get('/:building/:room', async function(req, res) {
 
 
    
+});
+
+
+router.post('/rooms/predictions', async function(req, res) {
+    var room = req.body.room;
+    var now = new Date();
+    var arrayOfTimes = new Array(336).fill(0);
+
+    knex.select('id').from('machines').where('room_id', function() {
+        this.select('id').from('rooms').where('room_number', room);
+    })
+    .then(function(machines) {
+        console.log(machines);
+
+        knex.select().from('usages').where('device', 'like', '%tty%').andWhere()
+        res.json({sucess: true});
+    })
+
+
+    /*
+    arrayOfTimes.forEach(function(time, idx) {
+        console.log("idx: " + idx + " time: " + time);
+    });
+    res.json({sucess: true});
+    */
 });
 
 module.exports = router;

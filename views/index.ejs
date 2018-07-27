@@ -120,7 +120,7 @@
                     </td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
-                    <td class="availability"><%= row.availability %></td>
+                    <td class="availability"></td>
                     <td class="occupants">
                       <div class="progress" style="height: 20px;">
 
@@ -220,12 +220,14 @@
           roomTable.each(async (idx, row) => {
             var room = $(row).find('.room').text();
             var occupants = $(row).find(".occupants").text();
-            var res = occupants.split(" of ");
+            var res = occupants.trim().split(" of ")
 
             if (res[0] == res[1]) {
               availability = "Full";
+              $(row).find('.availability').text(availability);
+              return
             }
-          
+
             var data = {
               room: room,
             }
