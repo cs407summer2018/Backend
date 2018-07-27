@@ -31,6 +31,8 @@ router.post('/addMachine', function(req, res) {
     });
 })
 
+
+/*
 router.get('/:building/:room/:machine', async function(req, res) {
     let parms = { title: 'Home', active: { home: true }, rows: []};
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
@@ -81,6 +83,7 @@ router.get('/:building/:room/:machine', async function(req, res) {
         });
 
 });
+*/
 
 
 module.exports = router;
