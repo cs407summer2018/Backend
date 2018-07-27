@@ -82,7 +82,14 @@
             </div>
 
             <div id="lab-busy-times-div" class="content">
-
+                <p id="date-time"></p>
+                <button id="date-prev" type="button" class="btn">
+                    <span class="glyphicon glyphicon-chevron-left" style="font-size: 1.5em;"></span>
+                </button>
+                <button id="date-next" type="button" class="btn">
+                    <span class="glyphicon glyphicon-chevron-right" style="font-size: 1.5em;"></span>
+                </button>
+                <div id="chartContainer" style="height: 300px; width: 100%"></div>
             </div>
             
             <div id="lab-heat-map-div" class="content">
@@ -241,16 +248,210 @@
 </footer>
 
 <script>
+
+    $(document).ready(function() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+
+        var yyyy = today.getFullYear();
+        if(dd<10){
+            dd='0'+dd;
+        } 
+        if(mm<10){
+            mm='0'+mm;
+        } 
+        var today = mm+'/'+dd+'/'+yyyy;
+                $('#date-time').text(today);
+        })
+
   $(document).ready(function(){
       $('[class="btn"]').tooltip({ trigger: "hover" });   
   });
 
   $(function() {
-    $(".btn").on("click",function(e) {
+    $(".btn").on("click", async function(e) {
       if (this.id == "email-lab") {
         // our stuff
-        console.log(' oniasdasd');
-      } else {
+       } else if (this.id == "date-next") {
+           var today = $('#date-time').text();
+           var dayArray = today.split('/');
+           var day = new Date(dayArray[2], dayArray[0] - 1, dayArray[1]);
+           day.setDate(day.getDate() + 1);
+
+            var dd = day.getDate();
+            var mm = day.getMonth()+1; //January is 0!
+
+            var yyyy = day.getFullYear();
+            if(dd<10){
+                dd='0'+dd;
+            } 
+            if(mm<10){
+                mm='0'+mm;
+            } 
+            var tomorrow = mm+'/'+dd+'/'+yyyy;
+
+            var room = $("#room-name").text().split(" ")[1];
+            
+            var sucess = true;
+
+            var data = {
+                room: room,
+                day: tomorrow
+            }
+
+            await $.ajax({
+            type: "POST",
+            url: '/rooms/predictions',
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+                console.log(data.timesData);
+                if (data.sucess == false ) {
+                    sucess = false;
+                    return;
+                }
+                var options = {
+                axisY:{
+                    interval: 5,
+                    maximum: 30
+                },
+                axisX: {
+                    interval: 1
+                },
+                height: 400,
+                width: 600,
+                data: [              
+                {
+                    color: "#6699ff",
+                    type: "column",
+                    dataPoints: [
+                        { label: "Midnight",  y: data.timesData[0] },
+                        { label: "1 am", y:  data.timesData[1] },
+                        { label: "2 am", y: data.timesData[2]  },
+                        { label: "3 am",  y: data.timesData[3] },
+                        { label: "4 am",  y: data.timesData[4] },
+                        { label: "5 am", y: data.timesData[5]  },
+                        { label: "6 am", y: data.timesData[6]  },
+                        { label: "7 am",  y: data.timesData[7]  },
+                        { label: "8 am",  y: data.timesData[8]  },
+                        { label: "9 am",  y: data.timesData[9]  },
+                        { label: "10 am", y: data.timesData[10]  },
+                        { label: "11 am", y: data.timesData[11]  },
+                        { label: "12 pm",  y: data.timesData[12]  },
+                        { label: "1 pm",  y: data.timesData[13]  },
+                        { label: "2 pm", y: data.timesData[14]  },
+                        { label: "3 pm", y: data.timesData[15] },
+                        { label: "4 pm",  y: data.timesData[16]  },
+                        { label: "5 pm",  y: data.timesData[17]  },
+                        { label: "6 pm",  y: data.timesData[18]  },
+                        { label: "7 pm", y: data.timesData[19]  },
+                        { label: "8 pm", y: data.timesData[20]  },
+                        { label: "9 pm",  y: data.timesData[21]  },
+                        { label: "10 pm",  y: data.timesData[22]  },
+                        { label: "11 pm", y: data.timesData[23]  }
+                    ]
+                }
+                ]
+            };
+
+            if (sucess) {$("#chartContainer").CanvasJSChart(options);}
+            },
+            });
+
+            
+            if (sucess) {
+            $('#date-time').text(tomorrow)
+        }
+
+       } else if (this.id == "date-prev") {
+            var today = $('#date-time').text();
+            var dayArray = today.split('/');
+           var day = new Date(dayArray[2], dayArray[0] - 1, dayArray[1]);
+           day.setDate(day.getDate() - 1);
+           var dd = day.getDate();
+            var mm = day.getMonth()+1; //January is 0!
+
+            var yyyy = day.getFullYear();
+            if(dd<10){
+                dd='0'+dd;
+            } 
+            if(mm<10){
+                mm='0'+mm;
+            } 
+            var yesterday = mm+'/'+dd+'/'+yyyy;
+
+             var room = $("#room-name").text().split(" ")[1];
+
+            var data = {
+                room: room,
+                day: yesterday
+            }
+
+            var sucess = true;
+
+            await $.ajax({
+            type: "POST",
+            url: '/rooms/predictions',
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+                if (data.sucess == false ) {
+                    sucess = false;
+                    return;
+                }
+                console.log(data.timesData);
+                var options = {
+            axisY:{
+            interval: 5,
+            maximum: 30
+            },
+            axisX: {
+            interval: 1
+            },
+            height: 400,
+            width: 600,
+            data: [              
+            {
+            color: "#6699ff",
+            type: "column",
+            dataPoints: [
+            { label: "Midnight",  y: data.timesData[0] },
+            { label: "1 am", y:  data.timesData[1] },
+            { label: "2 am", y: data.timesData[2]  },
+            { label: "3 am",  y: data.timesData[3] },
+            { label: "4 am",  y: data.timesData[4] },
+            { label: "5 am", y: data.timesData[5]  },
+            { label: "6 am", y: data.timesData[6]  },
+            { label: "7 am",  y: data.timesData[7]  },
+            { label: "8 am",  y: data.timesData[8]  },
+            { label: "9 am",  y: data.timesData[9]  },
+            { label: "10 am", y: data.timesData[10]  },
+            { label: "11 am", y: data.timesData[11]  },
+            { label: "12 pm",  y: data.timesData[12]  },
+            { label: "1 pm",  y: data.timesData[13]  },
+            { label: "2 pm", y: data.timesData[14]  },
+            { label: "3 pm", y: data.timesData[15] },
+            { label: "4 pm",  y: data.timesData[16]  },
+            { label: "5 pm",  y: data.timesData[17]  },
+            { label: "6 pm",  y: data.timesData[18]  },
+            { label: "7 pm", y: data.timesData[19]  },
+            { label: "8 pm", y: data.timesData[20]  },
+            { label: "9 pm",  y: data.timesData[21]  },
+            { label: "10 pm",  y: data.timesData[22]  },
+            { label: "11 pm", y: data.timesData[23]  }
+            ]
+            }
+            ]
+            };
+            if (sucess) {$("#chartContainer").CanvasJSChart(options);}
+            }
+            });
+            if (sucess) {
+                $('#date-time').text(yesterday)
+            }
+
+       } else {
         if ($("#"+this.id+"-div").is(":visible")) {
           //e.preventDefault();
           $(".content").hide();
@@ -323,6 +524,87 @@
         }
 
 </script>
+
+    <script>
+window.onload = async function () {
+
+
+
+var room = $("#room-name").text().split(" ")[1];
+
+var today = $('#date-time').text();
+
+var data = {
+    room: room,
+    day: today
+}
+
+var sucess = true;
+
+await $.ajax({
+type: "POST",
+url: '/rooms/predictions',
+data: data,
+dataType: 'json',
+success: function(data) {
+                if (data.sucess == false ) {
+                    sucess = false;
+                    return;
+                }
+                console.log(data.timesData);
+                var options = {
+            axisY:{
+            interval: 5,
+            maximum: 30
+            },
+            axisX: {
+            interval: 1
+            },
+            height: 400,
+            width: 600,
+            data: [              
+            {
+            color: "#6699ff",
+            type: "column",
+            dataPoints: [
+            { label: "Midnight",  y: data.timesData[0] },
+            { label: "1 am", y:  data.timesData[1] },
+            { label: "2 am", y: data.timesData[2]  },
+            { label: "3 am",  y: data.timesData[3] },
+            { label: "4 am",  y: data.timesData[4] },
+            { label: "5 am", y: data.timesData[5]  },
+            { label: "6 am", y: data.timesData[6]  },
+            { label: "7 am",  y: data.timesData[7]  },
+            { label: "8 am",  y: data.timesData[8]  },
+            { label: "9 1m",  y: data.timesData[9]  },
+            { label: "10 am", y: data.timesData[10]  },
+            { label: "11 am", y: data.timesData[11]  },
+            { label: "12 pm",  y: data.timesData[12]  },
+            { label: "1 pm",  y: data.timesData[13]  },
+            { label: "2 pm", y: data.timesData[14]  },
+            { label: "3 pm", y: data.timesData[15] },
+            { label: "4 pm",  y: data.timesData[16]  },
+            { label: "5 pm",  y: data.timesData[17]  },
+            { label: "6 pm",  y: data.timesData[18]  },
+            { label: "7 pm", y: data.timesData[19]  },
+            { label: "8 pm", y: data.timesData[20]  },
+            { label: "9 pm",  y: data.timesData[21]  },
+            { label: "10 pm",  y: data.timesData[22]  },
+            { label: "11 pm", y: data.timesData[23]  }
+            ]
+            }
+            ]
+            };
+            if (sucess) {$("#chartContainer").CanvasJSChart(options);}
+            }
+        });
+    };
+        
+</script>
+
+
+
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 
 </body>
 </html>

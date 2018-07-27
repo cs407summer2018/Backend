@@ -143,10 +143,10 @@ router.get('/', async function(req, res, next) {
           res.render('index.ejs', parms);
         }
     });
-
-        }).catch(function(err) {
-            res.json({error: 'error3'});
-        });
+    }).catch(function(err) {
+        params.error = "database query failure";
+        res.render('error.ejs', parms);
+    });
 
 });
 

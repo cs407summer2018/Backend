@@ -20,7 +20,7 @@ router.get('/', async function(req, res, next) {
     res.redirect(307, '/');
   } else {
     // Otherwise complain
-    res.render('error.ejs', { title: 'Error', message: 'Authorization error', error: { status: 'Missing code parameter' } });
+    res.render('error.ejs', { title: 'Error', message: 'Authorization error', error: { status: 'Missing code parameter' }, user: null });
   }
 });
 
