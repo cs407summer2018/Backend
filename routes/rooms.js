@@ -167,22 +167,65 @@ router.get('/:building/:room', async function(req, res) {
 
 router.post('/rooms/predictions', async function(req, res) {
     var room = req.body.room;
-    var now = new Date();
-    var arrayOfTimes = new Array(336).fill(0);
+    var timeNow = new Date();
+    var timeWeekAgo = new Date();
+    timeWeekAgo.setDate(timeNow.getDate() - 8);
+    var timeWeekAgoString = timeWeekAgo.toISOString().slice(0, 19).replace('T', ' ');
+    var secondsInHour = 3600000;
+    var hoursInWeek = 192;
+    console.log()
+    console.log("timeNow: " + timeNow.toISOString().slice(0, 19).replace('T', ' '));
+    var arrayOfTimesPast = new Array(hoursInWeek).fill(0);
 
-    knex.select('id').from('machines').where('room_id', function() {
-        this.select('id').from('rooms').where('room_number', room);
-    })
-    .then(function(machines) {
-        console.log(machines);
+    knex.raw('select * from usages \
+    where start_time >= STR_TO_DATE(\''+ timeWeekAgoString + '\', \'%Y-%m-%d %H:%i:%s\') \
+    and device like \'%tty%\'\
+    and machine_id in ( select id from machines where room_id = (select id from rooms where room_number=\'' + room + '\'))')
+    .then(function(results) {
+        //console.log(results);
+        results[0].forEach(function(usage) {
+            /*
+            console.log(usage.id);
+            console.log("start_time: " + usage.start_time.toISOString().slice(0, 19).replace('T', ' '));
+            if (usage.end_time != undefined) {
+                console.log("end_time: " + usage.end_time.toISOString().slice(0, 19).replace('T', ' '));
+            } else {
+                console.log("end_time: null");
+            }
+            */
+            var hoursSinceStart = Math.ceil(Math.abs(timeNow - usage.start_time) / secondsInHour); // diff in hours rounded up
+            var hoursSinceEnd = usage.end_time == null ? null : Math.abs(timeNow - usage.end_time) / secondsInHour; // diff in hours
+        
+            //console.log(hoursSinceStart);
+            //console.log(hoursSinceEnd);
 
-        knex.select().from('usages').where('device', 'like', '%tty%').andWhere()
-        res.json({sucess: true});
+            arrayOfTimesPast[hoursInWeek - hoursSinceStart]++;
+            hoursSinceStart--;
+
+            while(hoursSinceStart > hoursSinceEnd && hoursSinceStart >= 0) {
+                arrayOfTimesPast[hoursInWeek - hoursSinceStart]++;
+                hoursSinceStart--;
+            }
+        });
+        
+        //arrayOfTimesPast.forEach(function(item, idx) { console.log("hour: " + idx + " usages: " + item); })
+
+        var arrayOfTimesFutre = arrayOfTimesPast.slice().reverse();
+
+        //arrayOfTimesPast.forEach(function(item, idx) { console.log("hour: " + idx + " usages: " + item); })
+
+        var timesData = arrayOfTimesPast.concat(arrayOfTimesFutre);
+
+        //timesData.forEach(function(item, idx) { console.log("hour: " + idx + " usages: " + item); })
+
+        res.json({timesData: timesData, sucess: true});
+
+
     })
 
 
     /*
-    arrayOfTimes.forEach(function(time, idx) {
+    arrayOfTimesPast.forEach(function(time, idx) {
         console.log("idx: " + idx + " time: " + time);
     });
     res.json({sucess: true});
