@@ -43,10 +43,10 @@ function saveValuesToCookie(token, res) {
   var email = user.preferred_username;
   var username = email.substr(0, email.indexOf('@'));
   var address = email.substr(email.indexOf('@'), email.lanth);
-  var error = "Please login using a '@purdue.edu' email.";
+  var error = "Please login using a '@purdue.edu' email! Unfortunately, our website requires users to login to Microsoft 365 only with '@purdue.edu.";
 
   if (address != '@purdue.edu') {
-    res.render('../views/error.ejs', {error: error});
+    res.render('../views/error.ejs', {error: error, user: null, signInUrl: null});
   } else {
     knex('users').insert({email: email, name: username}).catch(function(err) {
       console.log("User already created.");

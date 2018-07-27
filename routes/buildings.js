@@ -131,7 +131,6 @@ router.get('/:building', async function(req, res, next) {
             res.render('building.ejs', parms);
         }
     });
-
         }).catch(function(err) {
             parms.error = err;
             res.render('error.ejs', parms);

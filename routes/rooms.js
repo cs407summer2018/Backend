@@ -140,14 +140,11 @@ router.get('/:building/:room', async function(req, res) {
                                 res.render('../views/room.ejs', parms);
                             }
                         });
-
-
-
-
-                       
                     });
             } else {
-                res.render('../views/error.ejs', {error: "invalid url"});
+              parms.error = "invalid url";
+              res.render('../views/error.ejs', parms);
+              //res.render('../views/error.ejs', {error: "invalid url"});
             }
         });
 });
