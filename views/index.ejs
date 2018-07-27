@@ -117,14 +117,68 @@
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
                     <td class="availability"><%= row.availability %></td>
-                    <td class="occupants"><%= row.occurances %> of <%= row.capacity %></td>
+                    <td class="occupants">
+                      <div class="progress" style="height: 20px;">
+
+                        <% if ((parseFloat(row.occurances) / parseFloat(row.capacity) * 100) < 33) { %>
+
+                          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+                        <% } else if ((parseFloat(row.occurances) / parseFloat(row.capacity) * 100) >= 33 && (parseFloat(row.occurances) / parseFloat(row.capacity) * 100) < 66) { %>
+
+                          <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+
+                        <% } else { %>  
+
+                          <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+
+                        <% } %>
+
+                      </div>
+                    </td>
                   <% } else { %>
                     <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
                     <td class="availability"></td>
-                    <td class="occupants"><%= row.occurances %> of <%= row.capacity %></td>
+                    <td class="occupants">
+
+                      <div class="progress" style="height: 20px;">
+
+                        <% if ((parseFloat(row.occurances) / parseFloat(row.capacity) * 100) < 33) { %>
+
+                          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+                        <% } else if ((parseFloat(row.occurances) / parseFloat(row.capacity) * 100) >= 33 && (parseFloat(row.occurances) / parseFloat(row.capacity) * 100) < 66) { %>
+
+                          <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+
+                        <% } else { %>  
+
+                          <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<%= row.occurances %>"
+                          aria-valuemin="0" aria-valuemax="<%= row.capacity %>" style="width: <%= parseFloat(row.occurances) / parseFloat(row.capacity) * 100 %>%">
+                          <span><%= row.occurances %> of <%= row.capacity %></span>
+                          </div>
+
+                        <% } %>
+
+                      </div>
+                      
+                    </td>
                   <% } %>
 
                 </tr>
