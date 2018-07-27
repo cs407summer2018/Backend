@@ -2,24 +2,25 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+    <head>
+      <% include ./partials/head %>
+    </head>
+    <body class="container">
+      <header>
+      <% include ./partials/header %>
+      </header>
 
-</head>
-<body class="container">
+      <main>
+        <div class="jumbotron">
+          <h1>ERROR</h1>
+          <p><%= error %></p>
+        </div>
 
-<header>
-    
-</header>
+      </main>
 
-<main>
-    <div class="jumbotron">
-        <h1>ERROR</h1>
-        <p><%= error %></p>
-    </div>
-</main>
+      <footer>
+        <% include ./partials/footer %>
+      </footer>
 
-<footer>
-</footer>
-
-</body>
+    </body>
 </html>

@@ -32,10 +32,13 @@
                 <th scope="col" onclick="sortTable(0)">Favorite</th>
                 <th scope="col" onclick="sortTable(1)">Building</th>
                 <th scope="col" onclick="sortTable(2)">Room</th>
-                <th scope="col" onclick="sortTable(3)">Machine Name</th>
-                <th scope="col" onclick="sortTable(4)">OS</th>
-                <th scope="col" onclick="sortTable(5)">Availability</th>
-                <th scope="col" onclick="sortTable(6)">Machines in Use</th>
+                <th scope="col" onclick="sortTable(3)">Email</th>
+                <th scope="col" onclick="sortTable(4)">Machine Name</th>
+                <th scope="col" onclick="sortTable(5)">OS</th>
+                <th scope="col" onclick="sortTable(6)">Availability</th>
+                <th scope="col" onclick="sortTable(7)">Machines in Use</th>
+                <th scope="col" onclick="sortTable(8)">Capacity</th>
+                <th scope="col" onclick="sortTable(9)">% of Machines in Use</th>
               <% } else { %>
                 <th scope="col" onclick="sortTable(0)">Building</th>
                 <th scope="col" onclick="sortTable(1)">Room</th>
@@ -71,6 +74,48 @@
                     <% } %>
                       <td><a href='/<%= row.abbrev %>'><%= row.abbrev %></a></td>
                     <td class='room'><a href='/<%= row.abbrev %>/<%= row.room_number %>'><%= row.room_number %></a></td>
+                     <td class='email'>
+                        <div class='centered'>
+                          <span class="glyphicon glyphicon-envelope" aria-hidden="true" style="color:#c28e0e" type="button" data-toggle="modal" data-target="#myModalRoom<%= idx %>">
+                          </span>
+                        </div>
+
+                        <div id="myModalRoom<%= idx %>" class="modal fade" role="dialog">
+                          <div class="modal-dialog">
+                              <!-- Modal content-->
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                      <h4 class="modal-title">
+                                          Send Email to lab user!
+                                      </h4>
+                                  </div>
+                                  <div class="modal-body">
+                                      <form action="/send-email" method="post" class="reused_form">
+                                          <p> Send your message to the lab user in the form below. </p>
+                                          <div class="form-group">
+                                              <label for="subject"> Name:</label>
+                                              <input type="text" class="form-control" id="subject" name="subject" required maxlength="50">
+                                              <input type = 'hidden' name='room' value=<%= row.room_number %>>
+                                          </div>
+                                          <!-- <div class="form-group">
+                                              <label for="to"> Send to:</label>
+                                              <input type="email" class="form-control" id="to" name="to" required maxlength="50">
+                                          </div> -->
+                                          <div class="form-group">
+                                              <label for="body"> Message:</label>
+                                              <textarea class="form-control" type="textarea" name="message" id="message" placeholder="Your Message Here" maxlength="6000" rows="7"></textarea>
+                                          </div>
+                                          <button type="submit" class="btn btn-lg btn-success btn-block" id="btnContactUs">Post It! &rarr;</button>
+                                      </form>
+                                      <div id="success_message" style="width:100%; height:100%; display:none; "> <h3>Sent your message successfully!</h3> </div>
+                                      <div id="error_message" style="width:100%; height:100%; display:none; "> <h3>Error</h3> Sorry there was an error sending your form. </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                    </td>
                     <td><%= row.machine_name %></td>
                     <td><%= row.OS %></td>
                     <td class="availability"><%= row.availability %></td>
@@ -102,6 +147,7 @@
 
 
         <script>
+
         jQuery(document).ready(function($) {
           $(".clickable-row").click(function() {
             window.location = $(this).data("href");
@@ -228,6 +274,23 @@
             }
           }
         }
+
+
+        $(function(){
+          $('.reused_form').submit(function(e) {
+            
+              //e.preventDefault();
+              console.log("submitted");
+              console.log(e);
+
+              $('.reused_form').hide();
+              $('#success_message').show();
+              $('#error_message').hide();
+          });
+        });
+          
+         
+
         </script>
     </main>
 

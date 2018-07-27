@@ -111,8 +111,9 @@ router.get('/:building/:room', async function(req, res) {
                                 calendar_options,
                                 function (err, response) {
                                     if (err) {
-                                        res.render('../views/error.ejs',
-                                                   error=err);
+                                      parms.error = err;
+                                      res.render('../views/error.ejs', parms);
+                                      //res.render('../views/error.ejs', error=err);
                                     }
                                     var startTime = new Date(response.data.items[0].start.dateTime);
                                     var endTime = new Date(response.data.items[0].end.dateTime);
@@ -137,7 +138,9 @@ router.get('/:building/:room', async function(req, res) {
                         }
                     });
             } else {
-                res.render('../views/error.ejs', {error: "invalid url"});
+              parms.error = "invalid url";
+              res.render('../views/error.ejs', parms);
+              //res.render('../views/error.ejs', {error: "invalid url"});
             }
         });
 });
