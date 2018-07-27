@@ -19,7 +19,7 @@
         <div align="center">
             <img class="headImg" src="purduecs.gif">
             <h1>PURDUE LAB STATS</h1>
-              <p style="font-size:125%;">All instructional lab information can be viewed below. Select a row to view more details and a full list of machines. </p>
+              <p style="font-size:125%;">All instructional lab information can be viewed below. Select a room to view more details and a full list of machines. </p>
             </div>
 
         <input class="form-control" id="myInput" type="text" placeholder="Search..">
@@ -37,8 +37,6 @@
                 <th scope="col" onclick="sortTable(5)">OS</th>
                 <th scope="col" onclick="sortTable(6)">Availability</th>
                 <th scope="col" onclick="sortTable(7)">Machines in Use</th>
-                <th scope="col" onclick="sortTable(8)">Capacity</th>
-                <th scope="col" onclick="sortTable(9)">% of Machines in Use</th>
               <% } else { %>
                 <th scope="col" onclick="sortTable(0)">Building</th>
                 <th scope="col" onclick="sortTable(1)">Room</th>
@@ -52,7 +50,7 @@
             </tr>
           </thead>
           <tbody id="myTable2">
-            <% rows.forEach((row) => { %>
+            <% rows.forEach((row, idx) => { %>
 
                 <tr class='clickable-row room-table' data-href='/<%= row.abbrev %>/<%= row.room_number %>'>
                   <% if (user) { %>
@@ -139,7 +137,7 @@
 
         <% if (user) { %>
           <script>
-             $(document).ready(function() {
+            $(document).ready(function() {
               sortTable(0);
             });
           </script>
@@ -147,12 +145,6 @@
 
 
         <script>
-
-        jQuery(document).ready(function($) {
-          $(".clickable-row").click(function() {
-            window.location = $(this).data("href");
-          });
-        });
 
         $(document).ready(function() {
           var availability = "";
@@ -182,6 +174,10 @@
             });
             $(row).find('.availability').text(availability);
           });
+        });
+
+        $('.email').click(function() {
+          //event.stopPropagation();
         });
 
         $(".favorite").click(function() {
