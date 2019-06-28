@@ -5,6 +5,10 @@
 <!-- CSS (load bootstrap from a CDN) -->
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
@@ -23,6 +27,7 @@
   body    {
     padding-top:50px;
   }
+
   th {
     cursor: pointer;
   }
@@ -70,5 +75,42 @@
     background: rgb(200, 200, 200);
     cursor: pointer;
   }
+
+  .headImg {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-size:auto 100%;
+  }
+
+  .content { 
+    display:none 
+  }
+
+  #email-lab,
+  #lab-schedule,
+  #lab-footage,
+  #lab-busy-times,
+  #lab-heat-map,
+  #lab-specs
+  #date-time
+  #date-next
+  #date-prev {
+    outline: none;
+  }
+
+  .progress {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 5px;
+  }
+
+  .progress span{
+    display: block;
+    position: absolute;
+    width: 10%;
+    color: black;
+  }
+
 
 </style>

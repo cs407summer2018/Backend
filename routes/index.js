@@ -38,11 +38,11 @@ router.get('/about', async function(req, res, next) {
 
   if (accessToken && userName) {
     parms.user = userName;
-    parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+    //parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
     parms.signInUrl = null;
   } else {
     parms.signInUrl = authHelper.getAuthUrl();
-    parms.debug = parms.signInUrl;
+    //parms.debug = parms.signInUrl;
     parms.user = null;
   }
 
@@ -61,11 +61,11 @@ router.get('/', async function(req, res, next) {
 
     if (accessToken && userName) {
         parms.user = userName;
-        parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
+       // parms.debug = `User: ${userName}\nAccess Token: ${accessToken}\n`;
         parms.signInUrl = null;
     } else {
         parms.signInUrl = authHelper.getAuthUrl();
-        parms.debug = parms.signInUrl;
+        //parms.debug = parms.signInUrl;
         parms.user = null;
     }
 
@@ -79,8 +79,8 @@ router.get('/', async function(req, res, next) {
      and device LIKE \'%tty%\'\
      order by machine_id) \
     group by room_id \
-    order by room_id;').then(function(results) {
-        rooms.forEach(function(room) {
+    order by room_id;').then(async function(results) {
+        rooms.forEach(async function(room) {
             var room_id = room.id;
             var filtered_row = results[0].filter(function(row){
                 return row.room_id === room_id;
@@ -102,7 +102,7 @@ router.get('/', async function(req, res, next) {
                 singleEvents: true,
                 orderBy: 'startTime'
             };
-            calendar.events.list(
+            await calendar.events.list(
                 calendar_options,
                 function (err, response) {
                     if (err) {
@@ -112,7 +112,9 @@ router.get('/', async function(req, res, next) {
                         var endTime = new Date(response.data.items[0].end.dateTime);
                         var timeNow = new Date();
                         if (startTime <= timeNow && timeNow <= endTime) {
-                            room.availability = "Class";
+                            room.availability = "Class In Session";
+                        } else {
+                          room.availability = "Open";
                         }
                     }
                 });
@@ -134,55 +136,22 @@ router.get('/', async function(req, res, next) {
                             room.favorited = 1;
                         }
                     });
-
-                    console.log(rooms);
                     res.render('index.ejs', parms);
+
                 });
         } else {
-            res.render('index.ejs', parms);
+          res.render('index.ejs', parms);
         }
     });
-
-        }).catch(function(err) {
-            res.json({error: 'error3'});
-        });
+    }).catch(function(err) {
+        params.error = "database query failure";
+        res.render('error.ejs', parms);
+    });
 
 });
 
 
 
 
-var recurse = function (rooms, idx, req, res, parms) {
-    if (idx < rooms.length) {
-        var room = rooms[idx];
-        // make api call for room
-        var avaliablity = "";
-        let calendar = google.calendar('v3');
-        let calendar_options = {
-            auth: jwtClient,
-            calendarId: room.google_calender_id,
-            timeMin: (new Date()).toISOString(),
-            maxResults: 10,
-            singleEvents: true,
-            orderBy: 'startTime'};
-        calendar.events.list(
-            calendar_options,
-            function (err, response) {
-                var startTime = new Date(response.data.items[0].start.dateTime);
-                var endTime = new Date(response.data.items[0].end.dateTime);
-                var timeNow = new Date();
-                if (startTime <= timeNow && timeNow <= endTime) {
-                    avaliablity = "Class In Session";
-                } else {
-                    avaliablity = "Open";
-                }
-                room.avaliablity = avaliablity;
-                console.log(avaliablity);
-                recurse(rooms, idx+1, req, res, parms);
-            });
-    } else {
-        res.render('index.ejs', parms);
-    }
-};
 
 module.exports = router;
